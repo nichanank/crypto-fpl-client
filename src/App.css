@@ -4,23 +4,59 @@
 
 .App-logo {
   animation: App-logo-spin infinite 20s linear;
-  height: 40vmin;
+  height: 20vmin;
+  width: 20vmin;
   pointer-events: none;
+  float: center;
 }
 
-.App-header {
+header {
   background-color: #282c34;
-  min-height: 100vh;
+  min-height: 15vh;
+  max-height: 20vh;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  font-size: calc(10px + 2vmin);
+  padding-top: 2%;
+  padding-bottom: 2%;
+  padding-right: 2rem;
+  color: white;
   align-items: center;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
 }
 
-.App-link {
-  color: #61dafb;
+
+.header-img {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  margin-top: 3rem;
+}
+
+.how-to-play-heading {
+  font-weight: bold;
+  font-size: 1rem;
+  margin-bottom: 1rem;
+  text-decoration: underline;
+}
+
+.how-to-play-container {
+  text-align: right;
+  margin-top: 2%;
+  padding-right: 1%;
+}
+
+.how-to-play-modal {
+  text-align: left;
+  margin: 2%;
+  padding: 1%;
+  font-size: 0.8rem;
+  display: block;
+}
+
+.logo-container {
+  flex-direction: column;
+  margin-top: 1rem;
 }
 
 @keyframes App-logo-spin {
@@ -30,4 +66,112 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.account {
+  font-size: 0.6em;
+  text-align: right;
+  vertical-align: center;
+}
+
+.title {
+  text-align: center;
+}
+
+.btn {
+  margin-right: 15px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.games-container-row {
+  overflow-y: scroll;
+  direction: rtl;
+}
+
+.games-container {
+  margin-left: 10%;
+  margin-right: 3%;
+  padding: 1rem;
+  justify-content: center;
+  min-height: 30%;
+  max-height: 400px;
+  direction: inherit;
+  overflow-y: auto;
+  direction: ltr;
+  /* border: 5px solid black; */
+}
+
+p.game-status {
+  font-weight: bold;
+}
+
+.game-item {
+  border: 1px solid darkslategrey;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.join-btn {
+  max-width: 50%;
+}
+
+.card-container {
+  font-size: calc(10px + 2vmin);
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  flex-direction: row;
+  -ms-flex-wrap: wrap;
+      flex-wrap: wrap;
+  justify-content: center;
+  background-color: #282c34;
+  padding-top: 3rem;
+  padding-bottom: 3rem;
+}
+
+.card {
+  width: 30%;
+  font-size: 1.2rem;
+}
+
+.selected-player-container {
+  margin-right: 10%;
+  margin-left: 3%;
+}
+
+.selected-player-card {
+  justify-content: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.card-content {
+  background-color: midnightblue;
+  text-align: center;
+  font-size: 3rem;
+  font-weight: bolder;
+  color: white;
+  margin: none;
+}
+
+.card-body-content {
+  font-weight: bold;
+  size: 5rem;
+}
+
+.player-icon {
+  width: 5rem;
+  height: 5rem;
+}
+
+.btn-selected {
+  background-color: green;
+}
+
+.btn-unselected {
+  background-color: grey;
 }

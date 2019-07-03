@@ -1,11 +1,17 @@
 {
-  "name": "cryptofpl",
+  "name": "cryptofpl-client",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@material-ui/core": "^4.1.3",
+    "axios": "^0.19.0",
+    "eth-crypto": "^1.3.4",
+    "materialize-css": "^1.0.0-rc.2",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-scripts": "3.0.1"
+    "react-scripts": "3.0.1",
+    "reactjs-popup": "^1.4.1",
+    "scrypt-js": "^2.0.4"
   },
   "scripts": {
     "start": "react-scripts start",
@@ -16,6 +22,7 @@
   "eslintConfig": {
     "extends": "react-app"
   },
+  "proxy": "http://localhost:4001",
   "browserslist": {
     "production": [
       ">0.2%",
@@ -27,5 +34,12 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "ethers": "^4.0.29",
+    "http-proxy-middleware": "^0.19.1",
+    "react-web3": "^1.2.0",
+    "web3": "^1.0.0-beta.55",
+    "web3-react": "^5.0.4"
   }
 }
