@@ -1,6 +1,6 @@
 export default {
   'FPL': {
-    address: '0x0cE3DD3e19eB253F6112B64DadB4263d138cCC54',
+    address: '0xc651DA590f82B54c842679Fe8078A15816b7002d',
     ABI:
     [
       {
@@ -182,18 +182,33 @@ export default {
           },
           {
             "indexed": false,
-            "name": "revealHash",
-            "type": "bytes32"
+            "name": "gkReveal",
+            "type": "bytes"
           },
           {
             "indexed": false,
-            "name": "random",
-            "type": "uint256"
+            "name": "defReveal",
+            "type": "bytes"
+          },
+          {
+            "indexed": false,
+            "name": "midReveal",
+            "type": "bytes"
+          },
+          {
+            "indexed": false,
+            "name": "fwdReveal",
+            "type": "bytes"
+          },
+          {
+            "indexed": false,
+            "name": "salt",
+            "type": "bytes"
           }
         ],
-        "name": "LogRevealTeam",
+        "name": "LogTeamReveal",
         "type": "event",
-        "signature": "0x7ecbedad1328cc035a6f4d1ddf54bfa5fc029a987b80407f63d11319be0b2db8"
+        "signature": "0x8fe4278893ad83d3998f488629a6b65c81a06d8065be139b9a872eb73a2ebe72"
       },
       {
         "anonymous": false,
@@ -357,12 +372,20 @@ export default {
         "constant": false,
         "inputs": [
           {
-            "name": "cardContractAddr",
-            "type": "address"
+            "name": "gkHash",
+            "type": "bytes32"
           },
           {
-            "name": "tokenIds",
-            "type": "uint256[]"
+            "name": "defHash",
+            "type": "bytes32"
+          },
+          {
+            "name": "midHash",
+            "type": "bytes32"
+          },
+          {
+            "name": "fwdHash",
+            "type": "bytes32"
           },
           {
             "name": "gameId",
@@ -374,38 +397,18 @@ export default {
         "payable": false,
         "stateMutability": "nonpayable",
         "type": "function",
-        "signature": "0x70483783"
+        "signature": "0x5dd437c0"
       },
       {
         "constant": true,
         "inputs": [
           {
             "name": "data",
-            "type": "bytes32"
-          }
-        ],
-        "name": "getHash",
-        "outputs": [
-          {
-            "name": "",
-            "type": "bytes32"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function",
-        "signature": "0x3cf5040a"
-      },
-      {
-        "constant": true,
-        "inputs": [
-          {
-            "name": "data",
-            "type": "bytes32"
+            "type": "bytes"
           },
           {
             "name": "salt",
-            "type": "bytes32"
+            "type": "bytes"
           }
         ],
         "name": "getSaltedHash",
@@ -418,7 +421,42 @@ export default {
         "payable": false,
         "stateMutability": "view",
         "type": "function",
-        "signature": "0x8dddbf36"
+        "signature": "0xf45d030c"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "gkReveal",
+            "type": "bytes"
+          },
+          {
+            "name": "defReveal",
+            "type": "bytes"
+          },
+          {
+            "name": "midReveal",
+            "type": "bytes"
+          },
+          {
+            "name": "fwdReveal",
+            "type": "bytes"
+          },
+          {
+            "name": "gameId",
+            "type": "uint256"
+          },
+          {
+            "name": "salt",
+            "type": "bytes"
+          }
+        ],
+        "name": "revealTeam",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function",
+        "signature": "0x4908baf1"
       },
       {
         "constant": true,
@@ -428,17 +466,37 @@ export default {
             "type": "uint256"
           }
         ],
-        "name": "getGKCommitForGame",
+        "name": "getTeamCommitForGame",
         "outputs": [
           {
-            "name": "",
-            "type": "bytes32"
+            "name": "commits",
+            "type": "bytes32[4]"
           }
         ],
         "payable": false,
         "stateMutability": "view",
         "type": "function",
-        "signature": "0xc9e3cfe9"
+        "signature": "0x21edf5ca"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "name": "gameId",
+            "type": "uint256"
+          }
+        ],
+        "name": "teamRevealed",
+        "outputs": [
+          {
+            "name": "",
+            "type": "bool"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function",
+        "signature": "0xc55e6d8b"
       },
       {
         "constant": false,
@@ -458,7 +516,7 @@ export default {
     ],
   },
   'FPLCards': {
-    address: '0x4908f98A17514e43762A476Dfb5128a4F09a04E8',
+    address: '0xA9150Df87a52A5Be39fD2AEC3ec9436B6AF98373',
     ABI: 
     [
       {

@@ -8,11 +8,11 @@ import { useContract } from './hooks'
 import { position, team } from './constants'
 import HowToPlay from './components/HowToPlay'
 import './App.css'
-
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
+import { sha3, numberToHex } from 'web3-utils'
+import InputLabel from '@material-ui/core/InputLabel'
+import MenuItem from '@material-ui/core/MenuItem'
+import FormControl from '@material-ui/core/FormControl'
+import Select from '@material-ui/core/Select'
 
 async function generateRandomTeam() {
   
@@ -92,10 +92,18 @@ export function App() {
   const [defSelection, setDefSelection] = useState(0)
   const [midSelection, setMidSelection] = useState(0)
   const [fwdSelection, setFwdSelection] = useState(0)
+
+  const [gkReveal, setGkReveal] = useState(0)
+  const [defReveal, setDefReveal] = useState(0)
+  const [midReveal, setMidReveal] = useState(0)
+  const [fwdReveal, setFwdReveal] = useState(0)
+
+  const [salt, setSalt] = useState(0)
   const [teamSelection, setTeamSelection] = useState([])
 
   useEffect(() => {
     context.setConnector('Injected', true).catch(e => console.error('Error getting injected provider.', e))
+    setSalt(Math.floor(Math.random() * 100))
   }, [context])
 
   if (!context.active && !context.error) {
@@ -125,7 +133,7 @@ export function App() {
     var game
     var gameId
     const result = await contract.methods.viewRecentlyCreatedGames().call()
-    const playerActiveGames = await contract.methods.viewActiveGames(context.account).call()
+    const playerActiveGames = await contract.methods.viewActiveGames(context.account).call({from: context.account})
     const totalGames = await contract.methods.totalGames().call()
     for (var i = 0; i < totalGames.toNumber(); i++) {
       gameId = result[i].toNumber()
@@ -165,7 +173,7 @@ function GameSelect(props) {
 
   function handleSubmit(e) {
     e.preventDefault()
-    submitTeam(context, FPLContract, FPLCardContract, teamSelection, gameId)
+    commitTeam(context, FPLContract, gameId, salt)
   }
 
   return (
@@ -182,26 +190,39 @@ function GameSelect(props) {
         </FormControl>
       </form>
       <button class="btn" onClick={() => viewGame(context, FPLContract, gameId)}> View </button>
+      <button class="btn" onClick={() => revealTeam(context, FPLContract, gameId)}> Reveal </button>
     </div>
   );
 }
 
-async function viewGame(FPLContract, gameId) {
+async function viewGame(context, FPLContract, gameId) {
   try {
     var game = await FPLContract.methods.getGameDetails(gameId).call()
+    var gameCommit = await FPLContract.methods.getTeamCommitForGame(gameId).call({from: context.account})
   } catch (err) {
     console.log(err)
   }
   setCurrentGame(game)
+  console.log(game)
+  console.log(gameCommit)
 }
 
-  async function submitTeam(context, FPLContract, FPLCardContract, teamSelection, gameId) {
-    var submittedTeam = []
-    for (var i = 0; i < teamSelection.length; i++) {
-      submittedTeam.push(teamSelection[i].id)
-    }
+  async function commitTeam(context, FPLContract, gameId) {
+    var teamHash = {}
+    teamHash['gk'] = await FPLContract.methods.getSaltedHash(numberToHex(gkReveal), numberToHex(salt)).call()
+    teamHash['def'] = await FPLContract.methods.getSaltedHash(numberToHex(defReveal), numberToHex(salt)).call()
+    teamHash['mid'] = await FPLContract.methods.getSaltedHash(numberToHex(midReveal), numberToHex(salt)).call()
+    teamHash['fwd'] = await FPLContract.methods.getSaltedHash(numberToHex(fwdReveal), numberToHex(salt)).call()
     try {
-      await FPLContract.methods.commitTeam(FPLCardContract.address, submittedTeam, gameId).send({ from: context.account, gasLimit: 6000000 })
+      await FPLContract.methods.commitTeam(teamHash['gk'], teamHash['def'], teamHash['mid'], teamHash['fwd'], gameId).send({ from: context.account, gasLimit: 6000000 })
+    } catch (err) {
+      console.log(err)
+    }
+  }
+
+  async function revealTeam(context, FPLContract, gameId) {
+    try {
+      await FPLContract.methods.revealTeam(sha3(numberToHex(gkSelection)), sha3(numberToHex(defSelection)), sha3(numberToHex(midSelection)), sha3(numberToHex(fwdSelection)), gameId, numberToHex(30)).send({ from: context.account, gasLimit: 6000000 })
     } catch (err) {
       console.log(err)
     }
@@ -239,25 +260,27 @@ async function viewGame(FPLContract, gameId) {
     )
   }
 
-  function mapSelection(footballer) {
+  async function mapSelection(footballer) {
     switch (footballer.position) {
       case 1: 
         setGkSelection(footballer.id)
+        setGkReveal(sha3(numberToHex(footballer.id)))
         break
       case 2: 
         setDefSelection(footballer.id)
+        setDefReveal(sha3(numberToHex(footballer.id)))
         break
       case 3:
         setMidSelection(footballer.id)
+        setMidReveal(sha3(numberToHex(footballer.id)))
         break
       default: 
         setFwdSelection(footballer.id)
+        setFwdReveal(sha3(numberToHex(footballer.id)))
         break
     }
-    setTeamSelection(teamSelection => [...teamSelection, footballer])
+    setTeamSelection([...teamSelection, footballer])
   }
-
-  console.log(currentGame)
 
   return (
     <div class="App">
@@ -292,7 +315,8 @@ async function viewGame(FPLContract, gameId) {
             <div class="row" >
               <div class="team-container" >
                 <div class="row team-selection-row selected-player-container">
-                {teamSelection.map((footballer, index) => (<FootballerIcon key={index} footballer={footballer} />))}
+                <p>Salt: {salt} </p>
+                {Object.entries(teamSelection).map(([key, value]) => (<FootballerIcon key={key} footballer={value} />))}
                 </div>
               </div>
               <GameSelect games={activeGames} />
