@@ -1,6 +1,6 @@
 export default {
   'FPL': {
-    address: '0xc651DA590f82B54c842679Fe8078A15816b7002d',
+    address: '0xA9F634CAc9aa5C51dEB1be524E51fB5BE7fdB5dB',
     ABI:
     [
       {
@@ -22,6 +22,48 @@ export default {
         "stateMutability": "view",
         "type": "function",
         "signature": "0x12eec019"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_myid",
+            "type": "bytes32"
+          },
+          {
+            "name": "_result",
+            "type": "string"
+          }
+        ],
+        "name": "__callback",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function",
+        "signature": "0x27dc297e"
+      },
+      {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_myid",
+            "type": "bytes32"
+          },
+          {
+            "name": "_result",
+            "type": "string"
+          },
+          {
+            "name": "_proof",
+            "type": "bytes"
+          }
+        ],
+        "name": "__callback",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function",
+        "signature": "0x38bbfa50"
       },
       {
         "constant": true,
@@ -350,12 +392,7 @@ export default {
       },
       {
         "constant": true,
-        "inputs": [
-          {
-            "name": "player",
-            "type": "address"
-          }
-        ],
+        "inputs": [],
         "name": "viewActiveGames",
         "outputs": [
           {
@@ -366,7 +403,7 @@ export default {
         "payable": false,
         "stateMutability": "view",
         "type": "function",
-        "signature": "0x22dafa75"
+        "signature": "0xea9eb219"
       },
       {
         "constant": false,
@@ -516,7 +553,7 @@ export default {
     ],
   },
   'FPLCards': {
-    address: '0xA9150Df87a52A5Be39fD2AEC3ec9436B6AF98373',
+    address: '0x8902994b1625113AaA805290ECeD5856F4583DD3',
     ABI: 
     [
       {
