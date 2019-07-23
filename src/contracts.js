@@ -1,6 +1,6 @@
 export default {
   'FPL': {
-    address: '0xA9F634CAc9aa5C51dEB1be524E51fB5BE7fdB5dB',
+    address: '0x665e4B7b079b35D7ca219a37C5b62913c4c29db2',
     ABI:
     [
       {
@@ -91,6 +91,37 @@ export default {
         "stateMutability": "nonpayable",
         "type": "constructor",
         "signature": "constructor"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": false,
+            "name": "message",
+            "type": "string"
+          }
+        ],
+        "name": "LogNewOraclizeQuery",
+        "type": "event",
+        "signature": "0x621c2856e3b87f81235f8ac8a22bbb40a0142961960710d00b2b6c380902b57e"
+      },
+      {
+        "anonymous": false,
+        "inputs": [
+          {
+            "indexed": false,
+            "name": "gameweek",
+            "type": "uint256"
+          },
+          {
+            "indexed": false,
+            "name": "deadline",
+            "type": "uint256"
+          }
+        ],
+        "name": "LogNewGameweekBegin",
+        "type": "event",
+        "signature": "0xa21c7a9265c04997aa5d2437820f73de709c1520d918243528537c2c41db3561"
       },
       {
         "anonymous": false,
@@ -294,6 +325,16 @@ export default {
         "signature": "0x598b937c5ae870243cb17b7777f106fb0688cf08cdcee299bf32badb25c62a6e"
       },
       {
+        "constant": false,
+        "inputs": [],
+        "name": "toggleContractPause",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function",
+        "signature": "0x86f9c864"
+      },
+      {
         "constant": true,
         "inputs": [
           {
@@ -486,6 +527,10 @@ export default {
           {
             "name": "salt",
             "type": "bytes"
+          },
+          {
+            "name": "totalScore",
+            "type": "uint256"
           }
         ],
         "name": "revealTeam",
@@ -493,7 +538,7 @@ export default {
         "payable": false,
         "stateMutability": "nonpayable",
         "type": "function",
-        "signature": "0x4908baf1"
+        "signature": "0x590659dd"
       },
       {
         "constant": true,
@@ -501,6 +546,10 @@ export default {
           {
             "name": "gameId",
             "type": "uint256"
+          },
+          {
+            "name": "player",
+            "type": "address"
           }
         ],
         "name": "getTeamCommitForGame",
@@ -513,7 +562,7 @@ export default {
         "payable": false,
         "stateMutability": "view",
         "type": "function",
-        "signature": "0x21edf5ca"
+        "signature": "0xdf6fab61"
       },
       {
         "constant": true,
@@ -521,6 +570,10 @@ export default {
           {
             "name": "gameId",
             "type": "uint256"
+          },
+          {
+            "name": "player",
+            "type": "address"
           }
         ],
         "name": "teamRevealed",
@@ -533,7 +586,27 @@ export default {
         "payable": false,
         "stateMutability": "view",
         "type": "function",
-        "signature": "0xc55e6d8b"
+        "signature": "0x097b6c25"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "name": "gameId",
+            "type": "uint256"
+          }
+        ],
+        "name": "viewWinner",
+        "outputs": [
+          {
+            "name": "winner",
+            "type": "address"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function",
+        "signature": "0x1f197a73"
       },
       {
         "constant": false,
@@ -553,7 +626,7 @@ export default {
     ],
   },
   'FPLCards': {
-    address: '0x8902994b1625113AaA805290ECeD5856F4583DD3',
+    address: '0x5fff45BA503Df88dD3eb6c8a6b37EB7a9Ff666d2',
     ABI: 
     [
       {

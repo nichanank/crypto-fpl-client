@@ -14,6 +14,7 @@ import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
 import FormControl from '@material-ui/core/FormControl'
 import Select from '@material-ui/core/Select'
+import { convertEpochToDatetime } from './utils'
 
 async function generateRandomTeam() {
   
@@ -48,9 +49,9 @@ async function buyPack(context, FPLCardContract) {
   const team = await generateRandomTeam()
   const amounts = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
   try {
-    await FPLCardContract.methods.mintTeam(context.account, team[0], team[1], amounts).send({ from: context.account, gasLimit: 6000000, value: 10000 })
+     await FPLCardContract.methods.mintTeam(context.account, team[0], team[1], amounts).send({ from: context.account, gasLimit: 6000000, value: 10000 }) 
     // await incrementMinted(res.data[0].id)
-    console.log('mint successful')
+    
   } catch (err) {
     console.log(err)
   }
@@ -63,6 +64,7 @@ function FootballerIcon(props) {
     <img src={shirt} alt="shirt" class="player-icon" />
     <span>{position(props.footballer.position)}</span>
     <span>{team(props.footballer.team)}</span>
+
   </div>
   )
 }
@@ -84,13 +86,16 @@ export function App() {
   const context = useWeb3Context()
   const FPLCardContract = useContract('FPLCards')
   const FPLContract = useContract('FPL')
-  const [transactionHash, setTransactionHash] = React.useState();
+  const [transactionHash, setTransactionHash] = useState();
+  const [currentGameweek, setCurrentGameweek] = useState({})
 
   const [roster, setRoster] = useState([])
   const [games, setGames] = useState([])
   const [activeGames, setActiveGames] = useState([])
   const [currentGame, setCurrentGame] = useState({})
   const [currentGameId, setCurrentGameId] = useState({})
+  const [currentGameCommit, setCurrentGameCommit] = useState([])
+  const [currentGameCommitOpponent, setCurrentGameCommitOpponent] = useState([])
   
   const [gkSelection, setGkSelection] = useState(0)
   const [defSelection, setDefSelection] = useState(0)
@@ -109,6 +114,7 @@ export function App() {
 
   function handleChange(e) {
     e.preventDefault()
+    viewGame(context, FPLContract, e.target.value)
     setCurrentGame(e.target.value)
     setCurrentGameId(e.target.value)
   }
@@ -127,10 +133,24 @@ export function App() {
     setSalt(update.salt)
   }
 
+  function handleBuy(e) {
+    e.preventDefault()
+    buyPack(context, FPLCardContract)
+    alert('team minted! click VIEW MY ROSTER to see your footballers')
+  }
+
   useEffect(() => {
     context.setConnector('Injected', true).catch(e => console.error('Error getting injected provider.', e))
     setSalt(Math.floor(Math.random() * 100))
-  }, [])
+  }, [context.account, context])
+
+  useEffect(() => {
+    async function fetchCurrentGameweek() {
+      const res = await axios.get('/api/gameweeks/live/1')
+      setCurrentGameweek(res.data)
+    };
+    fetchCurrentGameweek()
+  }, []);
 
   if (!context.active && !context.error) {
     console.log('loading...')
@@ -142,6 +162,14 @@ export function App() {
     console.log('success')
     console.log(context)
   }
+
+  // useEffect(() => {
+  //   if (context.active && !updated) {
+  //     fetchRoster(context, FPLCardContract)
+  //     fetchGames(FPLContract)
+  //     setUpdated(true)
+  //   }
+  // }, [context, FPLCardContract, FPLContract, fetchRoster, fetchGames, context.active, updated, context.account])
 
   function sendTransaction(toAddress, value) {
     const signer = context.library.getSigner()
@@ -165,7 +193,7 @@ export function App() {
       footballer = await axios.get('/api/footballers/' + result[i].toNumber())
       footballers = [...footballers, footballer] 
     }
-    setRoster(footballers);
+    setRoster(footballers)
   }
 
   async function fetchGames(contract) {
@@ -175,11 +203,20 @@ export function App() {
     const result = await contract.methods.viewRecentlyCreatedGames().call()
     const playerActiveGames = await contract.methods.viewActiveGames().call({from: context.account})
     const totalGames = await contract.methods.totalGames().call()
-    for (var i = 0; i < totalGames.toNumber(); i++) {
-      gameId = result[i].toNumber()
-      game = await contract.methods.getGameDetails(gameId).call()
-      games = [...games, game]
-      games[i].id = gameId
+    if (totalGames.toNumber() < 10) {
+      for (var i = 0; i < totalGames.toNumber(); i++) {
+        gameId = result[i].toNumber()
+        game = await contract.methods.getGameDetails(gameId).call()
+        games = [...games, game]
+        games[i].id = gameId
+      }
+    } else {
+      for (var j = 0; j < result.length; j++) {
+        gameId = result[i].toNumber()
+        game = await contract.methods.getGameDetails(gameId).call()
+        games = [...games, game]
+        games[i].id = gameId
+      }
     }
     setGames(games);
     setActiveGames(playerActiveGames)
@@ -205,14 +242,20 @@ export function App() {
 async function viewGame(context, FPLContract, gameId) {
   try {
     var game = await FPLContract.methods.getGameDetails(gameId).call()
-    var gameCommit = await FPLContract.methods.getTeamCommitForGame(gameId).call({from: context.account})
+    var gameCommit = await FPLContract.methods.getTeamCommitForGame(gameId, context.account).call()
+    var gameCommitOpponent
+    if (context.account === game.player1) {
+      gameCommitOpponent = await FPLContract.methods.getTeamCommitForGame(gameId, game.player2).call()
+    } else {
+      gameCommitOpponent = await FPLContract.methods.getTeamCommitForGame(gameId, game.player1).call()
+    }
   } catch (err) {
     console.log(err)
   }
   setCurrentGame(game)
   setCurrentGameId(gameId)
-  console.log(game)
-  console.log(gameCommit)
+  setCurrentGameCommit(gameCommit)
+  setCurrentGameCommitOpponent(gameCommitOpponent)
 }
 
   async function commitTeam(context, FPLContract, gameId) {
@@ -230,7 +273,7 @@ async function viewGame(context, FPLContract, gameId) {
 
   async function revealTeam(context, FPLContract, gameId) {
     try {
-      await FPLContract.methods.revealTeam(sha3(numberToHex(gkSelection)), sha3(numberToHex(defSelection)), sha3(numberToHex(midSelection)), sha3(numberToHex(fwdSelection)), gameId, numberToHex(salt)).send({ from: context.account, gasLimit: 6000000 })
+      await FPLContract.methods.revealTeam(sha3(numberToHex(gkSelection)), sha3(numberToHex(defSelection)), sha3(numberToHex(midSelection)), sha3(numberToHex(fwdSelection)), gameId, numberToHex(salt), 15).send({ from: context.account, gasLimit: 6000000 })
     } catch (err) {
       console.log(err)
     }
@@ -251,7 +294,7 @@ async function viewGame(context, FPLContract, gameId) {
           id: #{props.game.id} {props.game.isOpen ? <p class="game-status">open</p> : <p class="game-status">in progress</p>}
           <hr></hr>
           {props.game.player1}
-          {props.game.isOpen ? <button class="btn join-btn" onClick={() => joinGame(context, FPLContract, props.game.id).then(() => fetchGames(FPLContract))} > Join for {parseInt(props.game.wager)} wei</button> : <p>vs. {props.game.player2}</p>}
+          {props.game.isOpen ? <button class="btn join-btn" onClick={() => joinGame(context, FPLContract, props.game.id)} > Join for {parseInt(props.game.wager)} wei</button> : <p>vs. {props.game.player2}</p>}
         </div>
       </li>
     )
@@ -275,20 +318,20 @@ async function viewGame(context, FPLContract, gameId) {
   async function mapSelection(footballer) {
     switch (footballer.position) {
       case 1: 
-        setGkSelection(footballer.id)
-        setGkReveal(sha3(numberToHex(footballer.id)))
+        setGkSelection(footballer.player_id)
+        setGkReveal(sha3(numberToHex(footballer.player_id)))
         break
       case 2: 
-        setDefSelection(footballer.id)
-        setDefReveal(sha3(numberToHex(footballer.id)))
+        setDefSelection(footballer.player_id)
+        setDefReveal(sha3(numberToHex(footballer.player_id)))
         break
       case 3:
-        setMidSelection(footballer.id)
-        setMidReveal(sha3(numberToHex(footballer.id)))
+        setMidSelection(footballer.player_id)
+        setMidReveal(sha3(numberToHex(footballer.player_id)))
         break
       default: 
-        setFwdSelection(footballer.id)
-        setFwdReveal(sha3(numberToHex(footballer.id)))
+        setFwdSelection(footballer.player_id)
+        setFwdReveal(sha3(numberToHex(footballer.player_id)))
         break
     }
     setTeamSelection([...teamSelection, footballer])
@@ -300,6 +343,9 @@ async function viewGame(context, FPLContract, gameId) {
         <p class="account">{context.account}</p> <br></br>
       </header>
       <div class="row how-to-play-container">
+        <div class="col s6 m6 l6 gameweek-info-column">
+          {currentGameweek[0] ? <p><strong>Current Gameweek:</strong> {currentGameweek[0].id}<br></br><strong>Deadline:</strong> {convertEpochToDatetime(currentGameweek[0].deadline_time_epoch).toLocaleString()}</p> : <p>Fetching gameweek data... </p>}
+        </div>
         <HowToPlay />
       </div>
       <div class="row logo-container">
@@ -307,12 +353,12 @@ async function viewGame(context, FPLContract, gameId) {
         <h5 class="title" >Crypto Fantasy Premier League</h5>
       </div>
       <div class="row">
-        <button class="btn" onClick={() => buyPack(context, FPLCardContract)}> Buy Pack </button>
+        <button class="btn" onClick={(e) => handleBuy(e)}> Buy Pack </button>
         </div>
         <div class="row games-container-row">
           <div class="col s12 m6 l6">
             <h6><strong>Head-to-Head Games</strong></h6>
-              <button class="btn" onClick={() => createGame(context, FPLContract, 10000)}> Create Game </button>
+              <button class="btn" value="createGame" name="createGame" onClick={() => createGame(context, FPLContract, 10000)}> Create Game </button>
               <button class="btn" onClick={() => fetchGames(FPLContract)}> View Recent Games </button>
             <div class="row" >
              <ul>
@@ -324,38 +370,43 @@ async function viewGame(context, FPLContract, gameId) {
           </div>
           <div class="col s12 m6 l6">
             <h6><strong>Squad Selection</strong></h6>
-            <div class="row" >
+            <div class="row squad-column" >
               <div class="team-container" >
                 <div class="row team-selection-row selected-player-container">
-                <p>Salt </p>
-                <input
-                  style={{verticalAlign:"middle",width:100,margin:6,maxHeight:20,padding:5,border:'2px solid #ccc',borderRadius:5}}
-                  type="text" name="salt" value={salt} onChange={(e) => handleInput(e)}
-                  />
-                {Object.entries(teamSelection).map(([key, value]) => (<FootballerIcon key={key} footballer={value} />))}
+                  <div class="col s6 m6 l6">
+                    <p>Salt </p>
+                    <input
+                      style={{verticalAlign:"middle",width:100,margin:6,maxHeight:20,padding:5,border:'2px solid #ccc',borderRadius:5}}
+                      type="text" name="salt" value={salt} onChange={(e) => handleInput(e)} />
+                  </div>
+                  <div class="col s6 m6 l6">
+                    <form className={classes.root} autoComplete="off" onSubmit={(e) => handleSubmit(e)}>
+                      <FormControl className={classes.formControl}>
+                        <InputLabel htmlFor="age-simple">Game ID</InputLabel>
+                        <Select
+                          value={currentGameId}
+                          onChange={handleChange}>
+                          {activeGames.map((game, index) => <MenuItem key={index} value={game.toNumber()}>{game.toNumber()}</MenuItem> )}
+                        </Select>
+                        <input class="btn" type="submit" />
+                      </FormControl>
+                    </form>
+                  </div>
+                  {Object.entries(teamSelection).map(([key, value]) => (<FootballerIcon key={key} footballer={value} />))}
                 </div>
               </div>
-              <div>
-                <form className={classes.root} autoComplete="off" onSubmit={(e) => handleSubmit(e)}>
-                  <FormControl className={classes.formControl}>
-                    <InputLabel htmlFor="age-simple">Game ID</InputLabel>
-                    <Select
-                      value={currentGame}
-                      onChange={handleChange}>
-                      {activeGames.map((game, index) => <MenuItem key={index} value={game.toNumber()}>{game.toNumber()}</MenuItem> )}
-                    </Select>
-                    <input class="btn" type="submit" />
-                  </FormControl>
-                </form>
-                <button class="btn" onClick={() => viewGame(context, FPLContract, currentGame)}> View </button>
+              <div><br></br><hr></hr>
+                <div class="game-info-container">
+                  {currentGame.player1 ? <p> <strong>Current Game ID #{currentGameId}</strong> <br></br> Player 1: {currentGame.player1} <br></br> Player 2: {currentGame.player2} <br></br> <strong>YOUR TEAM</strong> <br></br> GK: {currentGameCommit[0]} <br></br> DEF: {currentGameCommit[1]} <br></br> MID: {currentGameCommit[2]} <br></br> FWD: {currentGameCommit[3]} <br></br> <strong>OPPONENT'S TEAM</strong> <br></br> GK: {currentGameCommitOpponent[0]} <br></br> DEF: {currentGameCommitOpponent[1]} <br></br> MID: {currentGameCommitOpponent[2]} <br></br> FWD: {currentGameCommitOpponent[3]}</p> 
+                  : <p> Select an active game from the dropdown menu or join an open game </p>}
+                </div>
                 <button class="btn" onClick={() => revealTeam(context, FPLContract, currentGameId)}> Reveal </button>
               </div>
               <button class="btn" onClick={() => resetTeam()}> Reset </button>
             </div>
           </div>
         </div>
-        <button class="btn" onClick={() => fetchRoster(context, FPLCardContract)}> View Available Players </button>
-          <h4 class="card-container-title">My Roster</h4>
+        <button class="btn" onClick={() => fetchRoster(context, FPLCardContract)}> View My Roster </button>
         <div class="row card-container">
          {roster.map((footballer, index) => (<FootballerCard key={index} index={index} footballer={footballer.data} />))}
         </div>

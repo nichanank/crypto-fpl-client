@@ -106,6 +106,19 @@ p.game-status {
   font-weight: bold;
 }
 
+.game-info-container {
+  align-items: left;
+  justify-content: left;
+  text-align: left;
+  font-size: small;
+}
+
+.gameweek-info-column {
+  padding: 5%;
+  text-align: left;
+  font-size: large;
+}
+
 .game-item {
   border: 1px solid darkslategrey;
   margin-bottom: 1rem;
@@ -140,6 +153,10 @@ p.game-status {
 .selected-player-container {
   margin-right: 10%;
   margin-left: 3%;
+}
+
+.squad-column {
+  padding: 5%;
 }
 
 .selected-player-card {

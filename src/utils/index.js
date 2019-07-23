@@ -111,3 +111,7 @@ export function getContract(library, contractName) {
 export function getContractAddress(contractName) {
   return contracts[contractName].address
 }
+
+export function convertEpochToDatetime(epoch) {
+  return new Date(epoch * 1000)
+}
