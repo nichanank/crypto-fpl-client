@@ -3,18 +3,20 @@ import { makeStyles } from '@material-ui/core/styles'
 import football from './assets/football.png'
 import shirt from './assets/footballer-shirt.png'
 import axios from 'axios'
-import { useWeb3Context, Web3Consumer } from 'web3-react'
+import { useWeb3Context } from 'web3-react'
 import { useContract } from './hooks'
 import { ethers } from 'ethers'
 import { position, team } from './constants'
 import HowToPlay from './components/HowToPlay'
 import './App.css'
-import { sha3, numberToHex } from 'web3-utils'
+import { sha3, numberToHex, toWei } from 'web3-utils'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
 import FormControl from '@material-ui/core/FormControl'
 import Select from '@material-ui/core/Select'
 import { convertEpochToDatetime } from './utils'
+import getWeb3 from "./utils/web3"
+import InjectedConnector from './InjectedConnector'
 
 async function generateRandomTeam() {
   
@@ -171,24 +173,25 @@ export function App() {
   //   }
   // }, [context, FPLCardContract, FPLContract, fetchRoster, fetchGames, context.active, updated, context.account])
 
-  function sendTransaction(toAddress, value) {
-    const signer = context.library.getSigner()
-    console.log(signer)
+  // function sendTransaction(toAddress, value) {
+  //   const signer = context.library.getSigner()
+  //   console.log(signer)
 
-    signer
-      .sendTransaction({
-        to: toAddress,
-        value: ethers.utils.bigNumberify(value)
-      })
-      .then(({ hash }) => {
-        setTransactionHash(hash);
-      });
-  }
+  //   signer
+  //     .sendTransaction({
+  //       to: toAddress,
+  //       value: ethers.utils.bigNumberify(value)
+  //     })
+  //     .then(({ hash }) => {
+  //       setTransactionHash(hash);
+  //     });
+  // }
 
   async function fetchRoster(context, FPLCardContract) {
     var footballers = []
     var footballer
-    const result = await FPLCardContract.methods.ownedTokens(context.account).call()
+    const callMethod = FPLCardContract.methods.ownedTokens(context.account)
+    const result = await callMethod.call({from: context.account})
     for (var i = 0; i < result.length; i++) {
       footballer = await axios.get('/api/footballers/' + result[i].toNumber())
       footballers = [...footballers, footballer] 
@@ -197,12 +200,23 @@ export function App() {
   }
 
   async function fetchGames(contract) {
+    // context.library.eth.sendTransaction({
+    //   from: context.account,
+    //   to: "0x5D97e8334968Df812F95f78897a1cb3E1aE4d7A4", 
+    //   value: toWei(1+"", "ether"), 
+    //   }, function(err, transactionHash) {
+    //       if (err) { 
+    //           console.log(err); 
+    //       } else {
+    //           console.log(transactionHash);
+    //       }
+    //   })
     var games = []
     var game
     var gameId
-    const result = await contract.methods.viewRecentlyCreatedGames().call()
+    const result = await contract.methods.viewRecentlyCreatedGames().call({from: context.account})
     const playerActiveGames = await contract.methods.viewActiveGames().call({from: context.account})
-    const totalGames = await contract.methods.totalGames().call()
+    const totalGames = await contract.methods.totalGames().call({from: context.account})
     if (totalGames.toNumber() < 10) {
       for (var i = 0; i < totalGames.toNumber(); i++) {
         gameId = result[i].toNumber()
@@ -218,16 +232,25 @@ export function App() {
         games[i].id = gameId
       }
     }
-    setGames(games);
+    setGames(games)
     setActiveGames(playerActiveGames)
   }
 
-  async function createGame(context, contract, wager) {
+  async function createGame(context, contract, wager) {    
     try {
-      await contract.methods.createGame(wager).send({ from: context.account, gasLimit: 600000, value: wager })
-      // await sendTransaction(contract.methods.createGame(wager), wager)
+      const callMethod = contract.methods.createGame(wager)
+      await callMethod.send({ from: context.account, gasLimit: 600000, value: wager }
+      , function(err, transactionHash) {
+          if (err) { 
+              console.log(err); 
+          } else {
+              alert("Game created! TxHash: "+transactionHash)
+              console.log(transactionHash);
+          }
+      })
     } catch (err) {
       console.log(err)
+      alert(err)
     }
   }
   
@@ -236,6 +259,7 @@ export function App() {
       await contract.methods.joinGame(gameId).send({ from: context.account, gasLimit: 600000, value: 10000 })
     } catch (err) {
       console.log(err)
+      alert(err)
     }
   }
 
@@ -251,6 +275,7 @@ async function viewGame(context, FPLContract, gameId) {
     }
   } catch (err) {
     console.log(err)
+    alert(err)
   }
   setCurrentGame(game)
   setCurrentGameId(gameId)
@@ -264,10 +289,13 @@ async function viewGame(context, FPLContract, gameId) {
     teamHash['def'] = await FPLContract.methods.getSaltedHash(numberToHex(defReveal), numberToHex(salt)).call()
     teamHash['mid'] = await FPLContract.methods.getSaltedHash(numberToHex(midReveal), numberToHex(salt)).call()
     teamHash['fwd'] = await FPLContract.methods.getSaltedHash(numberToHex(fwdReveal), numberToHex(salt)).call()
+    console.log(gkReveal)
+    console.log(sha3(numberToHex(gkSelection)))
     try {
       await FPLContract.methods.commitTeam(teamHash['gk'], teamHash['def'], teamHash['mid'], teamHash['fwd'], gameId).send({ from: context.account, gasLimit: 6000000 })
     } catch (err) {
       console.log(err)
+      alert(err)
     }
   }
 
@@ -276,6 +304,7 @@ async function viewGame(context, FPLContract, gameId) {
       await FPLContract.methods.revealTeam(sha3(numberToHex(gkSelection)), sha3(numberToHex(defSelection)), sha3(numberToHex(midSelection)), sha3(numberToHex(fwdSelection)), gameId, numberToHex(salt), 15).send({ from: context.account, gasLimit: 6000000 })
     } catch (err) {
       console.log(err)
+      alert(err)
     }
   }
 

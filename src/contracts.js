@@ -1,8 +1,8 @@
 export default {
   'FPL': {
-    address: '0x665e4B7b079b35D7ca219a37C5b62913c4c29db2',
+    address: '0xCF93E3176B120E29453f1c209a2624c745357BeF',
     ABI:
-    [
+      [
       {
         "constant": true,
         "inputs": [
@@ -335,6 +335,21 @@ export default {
         "signature": "0x86f9c864"
       },
       {
+        "constant": false,
+        "inputs": [
+          {
+            "name": "_deadline",
+            "type": "uint256"
+          }
+        ],
+        "name": "incrementGameweek",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function",
+        "signature": "0xea93ae41"
+      },
+      {
         "constant": true,
         "inputs": [
           {
@@ -388,6 +403,16 @@ export default {
       },
       {
         "constant": false,
+        "inputs": [],
+        "name": "withdrawRefund",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function",
+        "signature": "0x110f8874"
+      },
+      {
+        "constant": false,
         "inputs": [
           {
             "name": "gameId",
@@ -395,7 +420,12 @@ export default {
           }
         ],
         "name": "joinGame",
-        "outputs": [],
+        "outputs": [
+          {
+            "name": "",
+            "type": "uint256"
+          }
+        ],
         "payable": true,
         "stateMutability": "payable",
         "type": "function",
@@ -626,7 +656,7 @@ export default {
     ],
   },
   'FPLCards': {
-    address: '0x5fff45BA503Df88dD3eb6c8a6b37EB7a9Ff666d2',
+    address: '0x2FAC2B4fC86De4C3169B5681713806920F55b6Da',
     ABI: 
     [
       {

@@ -6,8 +6,8 @@ const {
 } = Connectors;
 
 const supportedNetworkURLs = {
-  1: "https://mainnet.infura.io/v3/60ab76e16df54c808e50a79975b4779f",
-  4: "https://rinkeby.infura.io/v3/60ab76e16df54c808e50a79975b4779f"
+  1: "https://mainnet.infura.io/v3/a2855c7103a644d29e2864d9865bb72d",
+  4: "https://rinkeby.infura.io/v3/a2855c7103a644d29e2864d9865bb72d"
 }
 
 const defaultNetwork = 1
