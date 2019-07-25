@@ -51,7 +51,7 @@ async function buyPack(context, FPLCardContract) {
   const team = await generateRandomTeam()
   const amounts = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
   try {
-     await FPLCardContract.methods.mintTeam(context.account, team[0], team[1], amounts).send({ from: context.account, gasLimit: 6000000, value: 10000 }) 
+     await FPLCardContract.methods.mintTeam(context.account, team[0], team[1], amounts).send({ from: context.account, value: 10000 }) 
     // await incrementMinted(res.data[0].id)
     
   } catch (err) {
@@ -138,7 +138,6 @@ export function App() {
   function handleBuy(e) {
     e.preventDefault()
     buyPack(context, FPLCardContract)
-    alert('team minted! click VIEW MY ROSTER to see your footballers')
   }
 
   useEffect(() => {
@@ -200,17 +199,6 @@ export function App() {
   }
 
   async function fetchGames(contract) {
-    // context.library.eth.sendTransaction({
-    //   from: context.account,
-    //   to: "0x5D97e8334968Df812F95f78897a1cb3E1aE4d7A4", 
-    //   value: toWei(1+"", "ether"), 
-    //   }, function(err, transactionHash) {
-    //       if (err) { 
-    //           console.log(err); 
-    //       } else {
-    //           console.log(transactionHash);
-    //       }
-    //   })
     var games = []
     var game
     var gameId
@@ -239,14 +227,13 @@ export function App() {
   async function createGame(context, contract, wager) {    
     try {
       const callMethod = contract.methods.createGame(wager)
-      await callMethod.send({ from: context.account, gasLimit: 600000, value: wager }
-      , function(err, transactionHash) {
-          if (err) { 
-              console.log(err); 
-          } else {
-              alert("Game created! TxHash: "+transactionHash)
-              console.log(transactionHash);
-          }
+      await callMethod.send({ from: context.account, value: wager }, function(err, transactionHash) {
+        if (err) { 
+            console.log(err); 
+        } else {
+            alert("Game created! TxHash: "+transactionHash)
+            console.log(transactionHash);
+        }
       })
     } catch (err) {
       console.log(err)
@@ -256,7 +243,15 @@ export function App() {
   
   async function joinGame(context, contract, gameId) {
     try {
-      await contract.methods.joinGame(gameId).send({ from: context.account, gasLimit: 600000, value: 10000 })
+      const callMethod = contract.methods.joinGame(gameId)
+      await callMethod.send({ from: context.account, value: 10000 }, function(err, transactionHash) {
+        if (err) { 
+            console.log(err); 
+        } else {
+            alert("Joined game " + gameId + "! TxHash: " + transactionHash)
+            console.log(transactionHash);
+        }
+      })
     } catch (err) {
       console.log(err)
       alert(err)
@@ -289,10 +284,8 @@ async function viewGame(context, FPLContract, gameId) {
     teamHash['def'] = await FPLContract.methods.getSaltedHash(numberToHex(defReveal), numberToHex(salt)).call()
     teamHash['mid'] = await FPLContract.methods.getSaltedHash(numberToHex(midReveal), numberToHex(salt)).call()
     teamHash['fwd'] = await FPLContract.methods.getSaltedHash(numberToHex(fwdReveal), numberToHex(salt)).call()
-    console.log(gkReveal)
-    console.log(sha3(numberToHex(gkSelection)))
     try {
-      await FPLContract.methods.commitTeam(teamHash['gk'], teamHash['def'], teamHash['mid'], teamHash['fwd'], gameId).send({ from: context.account, gasLimit: 6000000 })
+      await FPLContract.methods.commitTeam(teamHash['gk'], teamHash['def'], teamHash['mid'], teamHash['fwd'], gameId).send({ from: context.account })
     } catch (err) {
       console.log(err)
       alert(err)
@@ -301,7 +294,7 @@ async function viewGame(context, FPLContract, gameId) {
 
   async function revealTeam(context, FPLContract, gameId) {
     try {
-      await FPLContract.methods.revealTeam(sha3(numberToHex(gkSelection)), sha3(numberToHex(defSelection)), sha3(numberToHex(midSelection)), sha3(numberToHex(fwdSelection)), gameId, numberToHex(salt), 15).send({ from: context.account, gasLimit: 6000000 })
+      await FPLContract.methods.revealTeam(sha3(numberToHex(gkSelection)), sha3(numberToHex(defSelection)), sha3(numberToHex(midSelection)), sha3(numberToHex(fwdSelection)), gameId, numberToHex(salt), 15).send({ from: context.account })
     } catch (err) {
       console.log(err)
       alert(err)
