@@ -46,6 +46,18 @@ async function generateRandomTeam() {
   return [idsToMint, positionsToMint]
 }
 
+async function calculateTotalScore(players) {
+  var totalScore = 0
+  var res
+  var playerScores
+  for (var i = 0; i < players.length; i++) {
+    res = await axios.get('/api/scores/' + players[i])
+    playerScores = res.data[0]
+    totalScore += playerScores.gw1_score
+  }
+  return totalScore
+}
+
 // Mints a team to the caller.
 async function buyPack(context, FPLCardContract) {
   const team = await generateRandomTeam()
@@ -113,6 +125,7 @@ export function App() {
   const [defReveal, setDefReveal] = useState(0)
   const [midReveal, setMidReveal] = useState(0)
   const [fwdReveal, setFwdReveal] = useState(0)
+  const [totalScore, setTotalScore] = useState(0)
 
   const [salt, setSalt] = useState(0)
   const [teamSelection, setTeamSelection] = useState([])
@@ -143,6 +156,12 @@ export function App() {
   function handleBuy(e) {
     e.preventDefault()
     buyPack(context, FPLCardContract)
+  }
+
+  function handleCalculateScore(e) {
+    e.preventDefault()
+    calculateTotalScore([gkSelection, defSelection, midSelection, fwdSelection])
+      .then((score) => setTotalScore(score))
   }
 
   useEffect(() => {
@@ -281,7 +300,7 @@ async function viewGame(context, FPLContract, gameId) {
         if (err) {
           console.log(err)
         } else {
-          alert('team committed!')
+          alert('Team committed! Remember to take note of your salt (' + salt + ') and team selection. You will have to resubmit these when revealing your team.')
         }
       })
     } catch (err) {
@@ -297,7 +316,7 @@ async function viewGame(context, FPLContract, gameId) {
         if (err) {
           console.log(err)
         } else {
-          alert("successful team reveal!")
+          alert("Successful team reveal!")
         }
       })
     } catch (err) {
@@ -424,10 +443,11 @@ async function viewGame(context, FPLContract, gameId) {
               </div>
               <div><br></br><hr></hr>
                 <div class="game-info-container">
-                  {currentGame.player1 ? <p> <strong>Current Game ID #{currentGameId}</strong> <br></br> Player 1: {currentGame.player1} <br></br> Player 2: {currentGame.player2} <br></br> <strong>YOUR TEAM</strong> <br></br> GK: {currentGameCommit[0]} <br></br> DEF: {currentGameCommit[1]} <br></br> MID: {currentGameCommit[2]} <br></br> FWD: {currentGameCommit[3]} <br></br> <strong>OPPONENT'S TEAM</strong> <br></br> GK: {currentGameCommitOpponent[0]} <br></br> DEF: {currentGameCommitOpponent[1]} <br></br> MID: {currentGameCommitOpponent[2]} <br></br> FWD: {currentGameCommitOpponent[3]}</p> 
+                  {currentGame.player1 ? <p> <strong>Current Game ID #{currentGameId}</strong> <br></br> Player 1: {currentGame.player1} <br></br> Player 2: {currentGame.player2} <br></br> <strong>YOUR TEAM</strong> <br></br> GK: {currentGameCommit[0]} <br></br> DEF: {currentGameCommit[1]} <br></br> MID: {currentGameCommit[2]} <br></br> FWD: {currentGameCommit[3]} <br></br> <strong>OPPONENT'S TEAM</strong> <br></br> GK: {currentGameCommitOpponent[0]} <br></br> DEF: {currentGameCommitOpponent[1]} <br></br> MID: {currentGameCommitOpponent[2]} <br></br> FWD: {currentGameCommitOpponent[3]} <br></br><strong>YOUR SCORE: {totalScore}</strong></p> 
                   : <p> Select an active game from the dropdown menu or join an open game </p>}
                 </div>
                 <button class="btn" onClick={() => revealTeam(context, FPLContract, currentGameId)}> Reveal </button>
+                <button class="btn" onClick={(e) => handleCalculateScore(e)}> Calculate Score </button>
               </div>
               <button class="btn" onClick={() => resetTeam()}> Reset </button>
             </div>
