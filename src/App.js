@@ -5,7 +5,6 @@ import shirt from './assets/footballer-shirt.png'
 import axios from 'axios'
 import { useWeb3Context } from 'web3-react'
 import { useContract } from './hooks'
-import { ethers } from 'ethers'
 import { position, team } from './constants'
 import HowToPlay from './components/HowToPlay'
 import './App.css'
@@ -15,7 +14,6 @@ import MenuItem from '@material-ui/core/MenuItem'
 import FormControl from '@material-ui/core/FormControl'
 import Select from '@material-ui/core/Select'
 import { convertEpochToDatetime } from './utils'
-import getWeb3 from "./utils/web3"
 import InjectedConnector from './InjectedConnector'
 
 async function generateRandomTeam() {
@@ -83,22 +81,8 @@ function FootballerIcon(props) {
     <img src={shirt} alt="shirt" class="player-icon" />
     <span>{position(props.footballer.position)}</span>
     <span>{team(props.footballer.team)}</span>
-
   </div>
   )
-}
-
-async function incrementMinted(id) {
-  await axios.put('api/footballers/' + id + '/minted')
-}
-
-async function resetMintedData() {
-  try {
-    await axios.put('/api/footballers/reset')
-    console.log('footballer minted_count reset successful')
-  } catch (err) {
-    console.log(err)
-  }
 }
 
 export function App() {
@@ -126,6 +110,7 @@ export function App() {
   const [midReveal, setMidReveal] = useState(0)
   const [fwdReveal, setFwdReveal] = useState(0)
   const [totalScore, setTotalScore] = useState(0)
+  const [scoreCalculated, setScoreCalculated] = useState(false)
 
   const [salt, setSalt] = useState(0)
   const [teamSelection, setTeamSelection] = useState([])
@@ -162,6 +147,7 @@ export function App() {
     e.preventDefault()
     calculateTotalScore([gkSelection, defSelection, midSelection, fwdSelection])
       .then((score) => setTotalScore(score))
+      .then(() => setScoreCalculated(true))
   }
 
   useEffect(() => {
@@ -186,15 +172,8 @@ export function App() {
   } else {
     console.log('success')
     console.log(context)
+    console.log(FPLContract.methods)
   }
-
-  // useEffect(() => {
-  //   if (context.active && !updated) {
-  //     fetchRoster(context, FPLCardContract)
-  //     fetchGames(FPLContract)
-  //     setUpdated(true)
-  //   }
-  // }, [context, FPLCardContract, FPLContract, fetchRoster, fetchGames, context.active, updated, context.account])
 
   async function fetchRoster(context, FPLCardContract) {
     var footballers = []
@@ -212,7 +191,8 @@ export function App() {
     var games = []
     var game
     var gameId
-    const result = await contract.methods.viewRecentlyCreatedGames().call({from: context.account})
+    var callMethod = contract.methods.viewRecentlyCreatedGames()
+    const result = await callMethod.call({from: context.account})
     const playerActiveGames = await contract.methods.viewActiveGames().call({from: context.account})
     const totalGames = await contract.methods.totalGames().call({from: context.account})
     if (totalGames.toNumber() < 10) {
@@ -240,8 +220,9 @@ export function App() {
       await callMethod.send({ from: context.account, value: wager }, function(err, transactionHash) {
         if (err) { 
             console.log(err); 
+            alert(err)
         } else {
-            alert("Game created! TxHash: "+transactionHash)
+            alert("Game created! TxHash: " + transactionHash)
             console.log(transactionHash);
         }
       })
@@ -311,7 +292,7 @@ async function viewGame(context, FPLContract, gameId) {
 
   async function revealTeam(context, FPLContract, gameId) {
     try {
-      const callMethod = FPLContract.methods.revealTeam(sha3(numberToHex(gkSelection)), sha3(numberToHex(defSelection)), sha3(numberToHex(midSelection)), sha3(numberToHex(fwdSelection)), gameId, numberToHex(salt), 15)
+      const callMethod = FPLContract.methods.revealTeam(sha3(numberToHex(gkSelection)), sha3(numberToHex(defSelection)), sha3(numberToHex(midSelection)), sha3(numberToHex(fwdSelection)), gameId, numberToHex(salt), totalScore)
       await callMethod.send({ from: context.account }, function(err, transactionHash) {
         if (err) {
           console.log(err)
@@ -403,7 +384,7 @@ async function viewGame(context, FPLContract, gameId) {
         </div>
         <div class="row games-container-row">
           <div class="col s12 m6 l6">
-            <h6><strong>Head-to-Head Games</strong></h6>
+            <h6><strong>🎮 Head-to-Head Games 🎮 </strong></h6>
               <button class="btn" value="createGame" name="createGame" onClick={() => createGame(context, FPLContract, 10000)}> Create Game </button>
               <button class="btn" onClick={() => fetchGames(FPLContract)}> View Recent Games </button>
             <div class="row" >
@@ -415,7 +396,7 @@ async function viewGame(context, FPLContract, gameId) {
             </div>
           </div>
           <div class="col s12 m6 l6">
-            <h6><strong>Squad Selection</strong></h6>
+            <h6><strong>👟 Squad Selection 👟</strong></h6>
             <div class="row squad-column" >
               <div class="team-container" >
                 <div class="row team-selection-row selected-player-container">
@@ -434,7 +415,7 @@ async function viewGame(context, FPLContract, gameId) {
                           onChange={handleChange}>
                           {activeGames.map((game, index) => <MenuItem key={index} value={game.toNumber()}>{game.toNumber()}</MenuItem> )}
                         </Select>
-                        <input class="btn" type="submit" />
+                        <input class="btn" value="Submit Team" type="submit" />
                       </FormControl>
                     </form>
                   </div>
@@ -446,10 +427,10 @@ async function viewGame(context, FPLContract, gameId) {
                   {currentGame.player1 ? <p> <strong>Current Game ID #{currentGameId}</strong> <br></br> Player 1: {currentGame.player1} <br></br> Player 2: {currentGame.player2} <br></br> <strong>YOUR TEAM</strong> <br></br> GK: {currentGameCommit[0]} <br></br> DEF: {currentGameCommit[1]} <br></br> MID: {currentGameCommit[2]} <br></br> FWD: {currentGameCommit[3]} <br></br> <strong>OPPONENT'S TEAM</strong> <br></br> GK: {currentGameCommitOpponent[0]} <br></br> DEF: {currentGameCommitOpponent[1]} <br></br> MID: {currentGameCommitOpponent[2]} <br></br> FWD: {currentGameCommitOpponent[3]} <br></br><strong>YOUR SCORE: {totalScore}</strong></p> 
                   : <p> Select an active game from the dropdown menu or join an open game </p>}
                 </div>
-                <button class="btn" onClick={() => revealTeam(context, FPLContract, currentGameId)}> Reveal </button>
-                <button class="btn" onClick={(e) => handleCalculateScore(e)}> Calculate Score </button>
+                {scoreCalculated ? <button class="btn" onClick={() => revealTeam(context, FPLContract, currentGameId)}> Reveal </button> :
+                <button class="btn" onClick={(e) => handleCalculateScore(e)}> Calculate Score </button>}                
               </div>
-              <button class="btn" onClick={() => resetTeam()}> Reset </button>
+              <button class="btn" onClick={() => resetTeam()}> Reset Team Selection </button>
             </div>
           </div>
         </div>

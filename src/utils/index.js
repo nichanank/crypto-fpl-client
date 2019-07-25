@@ -5,7 +5,7 @@ import scrypt from 'scrypt-js'
 import contracts from '../contracts'
 
 export function getContract(library, contractName) {
-  const web3 = new Web3(Web3.givenProvider || "http://127.0.0.1:7545")
+  const web3 = new Web3(library.givenProvider || "http://127.0.0.1:7545")
   if (contractName === 'FPLCards') {
     return new web3.eth.Contract(contracts.FPLCards.ABI, contracts.FPLCards.address)
   } else {
