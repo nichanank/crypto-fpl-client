@@ -1,60 +1,19 @@
 import React, { useEffect, useState } from 'react'
-import { makeStyles } from '@material-ui/core/styles'
-import football from './assets/football.png'
-import shirt from './assets/footballer-shirt.png'
-import axios from 'axios'
 import { useWeb3Context } from 'web3-react'
-import { useContract } from './hooks'
-import { position, team } from './constants'
-import HowToPlay from './components/HowToPlay'
 import './App.css'
-import { sha3, numberToHex, toWei } from 'web3-utils'
+import { makeStyles } from '@material-ui/core/styles'
 import InputLabel from '@material-ui/core/InputLabel'
 import MenuItem from '@material-ui/core/MenuItem'
 import FormControl from '@material-ui/core/FormControl'
 import Select from '@material-ui/core/Select'
-import { convertEpochToDatetime } from './utils'
-import InjectedConnector from './InjectedConnector'
-
-async function generateRandomTeam() {
-  
-  var idsToMint = []
-  var positionsToMint = []
-  var res = await axios.get('/api/footballers/position/1')
-  var gk = res.data
-  res = await axios.get('/api/footballers/position/2')
-  var def = res.data
-  res = await axios.get('/api/footballers/position/3')
-  var mid = res.data
-  res = await axios.get('/api/footballers/position/4')
-  var fwd = res.data
-
-  for(var i = 0; i < 3; i++) {
-    idsToMint.push(gk[Math.floor(Math.random() * gk.length + 1)].player_id)
-    positionsToMint.push(1)
-  }
-  for(var j = 0; j < 4; j++) {
-    idsToMint.push(def[Math.floor(Math.random() * def.length + 1)].player_id)
-    positionsToMint.push(2)
-    idsToMint.push(mid[Math.floor(Math.random() * mid.length + 1)].player_id)
-    positionsToMint.push(3)
-    idsToMint.push(fwd[Math.floor(Math.random() * fwd.length + 1)].player_id)
-    positionsToMint.push(4)
-  }
-  return [idsToMint, positionsToMint]
-}
-
-async function calculateTotalScore(players) {
-  var totalScore = 0
-  var res
-  var playerScores
-  for (var i = 0; i < players.length; i++) {
-    res = await axios.get('/api/scores/' + players[i])
-    playerScores = res.data[0]
-    totalScore += playerScores.gw1_score
-  }
-  return totalScore
-}
+import football from './assets/football.png'
+import shirt from './assets/footballer-shirt.png'
+import axios from 'axios'
+import { useContract } from './hooks'
+import { position, team } from './constants'
+import HowToPlay from './components/HowToPlay'
+import { sha3, numberToHex } from 'web3-utils'
+import { convertEpochToDatetime, calculatePlayerScore, generateRandomTeam, fetchGames, fetchRoster, viewGame } from './utils'
 
 // Mints a team to the caller.
 async function buyPack(context, FPLCardContract) {
@@ -62,7 +21,7 @@ async function buyPack(context, FPLCardContract) {
   const amounts = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
   try {
     const callMethod = FPLCardContract.methods.mintTeam(context.account, team[0], team[1], amounts)
-    await callMethod.send({ from: context.account, value: 10000 }, function(err, transactionHash) {
+    await callMethod.send({ from: context.account, value: 100000 }, function(err, transactionHash) {
       if (err) {
         console.log(err)
       } else {
@@ -89,8 +48,8 @@ export function App() {
   const context = useWeb3Context()
   const FPLCardContract = useContract('FPLCards')
   const FPLContract = useContract('FPL')
-  const [transactionHash, setTransactionHash] = useState();
   const [currentGameweek, setCurrentGameweek] = useState({})
+  const [deadlinePassed, setDeadlinePassed] = useState(false)
 
   const [roster, setRoster] = useState([])
   const [games, setGames] = useState([])
@@ -99,6 +58,9 @@ export function App() {
   const [currentGameId, setCurrentGameId] = useState({})
   const [currentGameCommit, setCurrentGameCommit] = useState([])
   const [currentGameCommitOpponent, setCurrentGameCommitOpponent] = useState([])
+  
+  const [opponentRevealed, setOpponentRevealed] = useState(false)
+  const [revealed, setRevealed] = useState(false)
   
   const [gkSelection, setGkSelection] = useState(0)
   const [defSelection, setDefSelection] = useState(0)
@@ -109,7 +71,8 @@ export function App() {
   const [defReveal, setDefReveal] = useState(0)
   const [midReveal, setMidReveal] = useState(0)
   const [fwdReveal, setFwdReveal] = useState(0)
-  const [totalScore, setTotalScore] = useState(0)
+  const [playerScore, setPlayerScore] = useState(0)
+  const [opponentScore, setOpponentScore] = useState(0)
   const [scoreCalculated, setScoreCalculated] = useState(false)
 
   const [salt, setSalt] = useState(0)
@@ -119,8 +82,15 @@ export function App() {
 
   function handleChange(e) {
     e.preventDefault()
-    viewGame(context, FPLContract, e.target.value)
-    setCurrentGame(e.target.value)
+    viewGame(context, FPLContract, e.target.value).then((result) => {
+      setCurrentGame(result.game)
+      setCurrentGameCommit(result.gameCommit)
+      setCurrentGameCommitOpponent(result.gameCommitOpponent)
+      setRevealed(result.playerRevealed)
+      setOpponentRevealed(result.opRevealed)
+      setPlayerScore(result.score)
+      setOpponentScore(result.opponentScore)
+    })
     setCurrentGameId(e.target.value)
   }
 
@@ -138,6 +108,21 @@ export function App() {
     setSalt(update.salt)
   }
 
+  function handleFetchGames(e) {
+    e.preventDefault()
+    fetchGames(context, FPLContract).then((result) => {
+      setGames(result.games)
+      setActiveGames(result.activeGames)
+    })
+  }
+
+  function handleFetchRoster(e) {
+    e.preventDefault()
+    fetchRoster(context, FPLCardContract).then((footballers) => {
+      setRoster(footballers)
+    })
+  }
+
   function handleBuy(e) {
     e.preventDefault()
     buyPack(context, FPLCardContract)
@@ -145,8 +130,8 @@ export function App() {
 
   function handleCalculateScore(e) {
     e.preventDefault()
-    calculateTotalScore([gkSelection, defSelection, midSelection, fwdSelection])
-      .then((score) => setTotalScore(score))
+    calculatePlayerScore([gkSelection, defSelection, midSelection, fwdSelection])
+      .then((score) => setPlayerScore(score))
       .then(() => setScoreCalculated(true))
   }
 
@@ -158,7 +143,9 @@ export function App() {
   useEffect(() => {
     async function fetchCurrentGameweek() {
       const res = await axios.get('/api/gameweeks/live/1')
+      const deadline_epoch = res.data[0].deadline_time_epoch
       setCurrentGameweek(res.data)
+      if (deadline_epoch < Date.now()) { setDeadlinePassed(true) }
     };
     fetchCurrentGameweek()
   }, []);
@@ -172,46 +159,6 @@ export function App() {
   } else {
     console.log('success')
     console.log(context)
-    console.log(FPLContract.methods)
-  }
-
-  async function fetchRoster(context, FPLCardContract) {
-    var footballers = []
-    var footballer
-    const callMethod = FPLCardContract.methods.ownedTokens(context.account)
-    const result = await callMethod.call({from: context.account})
-    for (var i = 0; i < result.length; i++) {
-      footballer = await axios.get('/api/footballers/' + result[i].toNumber())
-      footballers = [...footballers, footballer] 
-    }
-    setRoster(footballers)
-  }
-
-  async function fetchGames(contract) {
-    var games = []
-    var game
-    var gameId
-    var callMethod = contract.methods.viewRecentlyCreatedGames()
-    const result = await callMethod.call({from: context.account})
-    const playerActiveGames = await contract.methods.viewActiveGames().call({from: context.account})
-    const totalGames = await contract.methods.totalGames().call({from: context.account})
-    if (totalGames.toNumber() < 10) {
-      for (var i = 0; i < totalGames.toNumber(); i++) {
-        gameId = result[i].toNumber()
-        game = await contract.methods.getGameDetails(gameId).call()
-        games = [...games, game]
-        games[i].id = gameId
-      }
-    } else {
-      for (var j = 0; j < result.length; j++) {
-        gameId = result[i].toNumber()
-        game = await contract.methods.getGameDetails(gameId).call()
-        games = [...games, game]
-        games[i].id = gameId
-      }
-    }
-    setGames(games)
-    setActiveGames(playerActiveGames)
   }
 
   async function createGame(context, contract, wager) {    
@@ -249,26 +196,6 @@ export function App() {
     }
   }
 
-async function viewGame(context, FPLContract, gameId) {
-  try {
-    var game = await FPLContract.methods.getGameDetails(gameId).call()
-    var gameCommit = await FPLContract.methods.getTeamCommitForGame(gameId, context.account).call()
-    var gameCommitOpponent
-    if (context.account === game.player1) {
-      gameCommitOpponent = await FPLContract.methods.getTeamCommitForGame(gameId, game.player2).call()
-    } else {
-      gameCommitOpponent = await FPLContract.methods.getTeamCommitForGame(gameId, game.player1).call()
-    }
-  } catch (err) {
-    console.log(err)
-    alert(err)
-  }
-  setCurrentGame(game)
-  setCurrentGameId(gameId)
-  setCurrentGameCommit(gameCommit)
-  setCurrentGameCommitOpponent(gameCommitOpponent)
-}
-
   async function commitTeam(context, FPLContract, gameId) {
     var teamHash = {}
     teamHash['gk'] = await FPLContract.methods.getSaltedHash(numberToHex(gkReveal), numberToHex(salt)).call()
@@ -292,7 +219,7 @@ async function viewGame(context, FPLContract, gameId) {
 
   async function revealTeam(context, FPLContract, gameId) {
     try {
-      const callMethod = FPLContract.methods.revealTeam(sha3(numberToHex(gkSelection)), sha3(numberToHex(defSelection)), sha3(numberToHex(midSelection)), sha3(numberToHex(fwdSelection)), gameId, numberToHex(salt), totalScore)
+      const callMethod = FPLContract.methods.revealTeam(sha3(numberToHex(gkSelection)), sha3(numberToHex(defSelection)), sha3(numberToHex(midSelection)), sha3(numberToHex(fwdSelection)), gameId, numberToHex(salt), playerScore)
       await callMethod.send({ from: context.account }, function(err, transactionHash) {
         if (err) {
           console.log(err)
@@ -386,7 +313,8 @@ async function viewGame(context, FPLContract, gameId) {
           <div class="col s12 m6 l6">
             <h6><strong>🎮 Head-to-Head Games 🎮 </strong></h6>
               <button class="btn" value="createGame" name="createGame" onClick={() => createGame(context, FPLContract, 10000)}> Create Game </button>
-              <button class="btn" onClick={() => fetchGames(FPLContract)}> View Recent Games </button>
+              {/* <button class="btn" onClick={() => fetchGames(FPLContract)}> View Recent Games </button> */}
+              <button class="btn" onClick={(e) => handleFetchGames(e)}> View Recent Games </button>
             <div class="row" >
              <ul>
               <div class="games-container" >
@@ -424,17 +352,34 @@ async function viewGame(context, FPLContract, gameId) {
               </div>
               <div><br></br><hr></hr>
                 <div class="game-info-container">
-                  {currentGame.player1 ? <p> <strong>Current Game ID #{currentGameId}</strong> <br></br> Player 1: {currentGame.player1} <br></br> Player 2: {currentGame.player2} <br></br> <strong>YOUR TEAM</strong> <br></br> GK: {currentGameCommit[0]} <br></br> DEF: {currentGameCommit[1]} <br></br> MID: {currentGameCommit[2]} <br></br> FWD: {currentGameCommit[3]} <br></br> <strong>OPPONENT'S TEAM</strong> <br></br> GK: {currentGameCommitOpponent[0]} <br></br> DEF: {currentGameCommitOpponent[1]} <br></br> MID: {currentGameCommitOpponent[2]} <br></br> FWD: {currentGameCommitOpponent[3]} <br></br><strong>YOUR SCORE: {totalScore}</strong></p> 
+                  {currentGame.player1 ? 
+                  <p> <strong>Current Game ID #{currentGameId}</strong> <br></br> 
+                  Player 1: {currentGame.player1} <br></br> 
+                  Player 2: {currentGame.player2} <br></br> 
+                  <strong>YOUR TEAM</strong> <br></br> 
+                  GK: {currentGameCommit[0]} <br></br> 
+                  DEF: {currentGameCommit[1]} <br></br> 
+                  MID: {currentGameCommit[2]} <br></br> 
+                  FWD: {currentGameCommit[3]} <br></br> 
+                  <strong>OPPONENT'S TEAM</strong> <br></br> 
+                  GK: {currentGameCommitOpponent[0]} <br></br> 
+                  DEF: {currentGameCommitOpponent[1]} <br></br> 
+                  MID: {currentGameCommitOpponent[2]} <br></br> 
+                  FWD: {currentGameCommitOpponent[3]} <br></br>
+                  <strong>YOUR SCORE: {playerScore}</strong><br></br>
+                  {opponentRevealed ? <strong> OPPONENT SCORE: {opponentScore}</strong> : 
+                  <p>Still waiting for opponent to reveal their team...</p>}</p> 
                   : <p> Select an active game from the dropdown menu or join an open game </p>}
                 </div>
-                {scoreCalculated ? <button class="btn" onClick={() => revealTeam(context, FPLContract, currentGameId)}> Reveal </button> :
+                {revealed || scoreCalculated ? 
+                <button class="btn" onClick={() => revealTeam(context, FPLContract, currentGameId)}> Reveal </button> :
                 <button class="btn" onClick={(e) => handleCalculateScore(e)}> Calculate Score </button>}                
               </div>
               <button class="btn" onClick={() => resetTeam()}> Reset Team Selection </button>
             </div>
           </div>
         </div>
-        <button class="btn" onClick={() => fetchRoster(context, FPLCardContract)}> View My Roster </button>
+        <button class="btn" onClick={(e) => handleFetchRoster(e)}> View My Roster </button>
         <div class="row card-container">
          {roster.map((footballer, index) => (<FootballerCard key={index} index={index} footballer={footballer.data} />))}
         </div>
