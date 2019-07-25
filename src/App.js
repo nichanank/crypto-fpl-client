@@ -51,9 +51,14 @@ async function buyPack(context, FPLCardContract) {
   const team = await generateRandomTeam()
   const amounts = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
   try {
-     await FPLCardContract.methods.mintTeam(context.account, team[0], team[1], amounts).send({ from: context.account, value: 10000 }) 
-    // await incrementMinted(res.data[0].id)
-    
+    const callMethod = FPLCardContract.methods.mintTeam(context.account, team[0], team[1], amounts)
+    await callMethod.send({ from: context.account, value: 10000 }, function(err, transactionHash) {
+      if (err) {
+        console.log(err)
+      } else {
+        alert('success! click VIEW MY ROSTER to see your team')
+      }
+    }) 
   } catch (err) {
     console.log(err)
   }
@@ -172,20 +177,6 @@ export function App() {
   //   }
   // }, [context, FPLCardContract, FPLContract, fetchRoster, fetchGames, context.active, updated, context.account])
 
-  // function sendTransaction(toAddress, value) {
-  //   const signer = context.library.getSigner()
-  //   console.log(signer)
-
-  //   signer
-  //     .sendTransaction({
-  //       to: toAddress,
-  //       value: ethers.utils.bigNumberify(value)
-  //     })
-  //     .then(({ hash }) => {
-  //       setTransactionHash(hash);
-  //     });
-  // }
-
   async function fetchRoster(context, FPLCardContract) {
     var footballers = []
     var footballer
@@ -285,7 +276,14 @@ async function viewGame(context, FPLContract, gameId) {
     teamHash['mid'] = await FPLContract.methods.getSaltedHash(numberToHex(midReveal), numberToHex(salt)).call()
     teamHash['fwd'] = await FPLContract.methods.getSaltedHash(numberToHex(fwdReveal), numberToHex(salt)).call()
     try {
-      await FPLContract.methods.commitTeam(teamHash['gk'], teamHash['def'], teamHash['mid'], teamHash['fwd'], gameId).send({ from: context.account })
+      const callMethod = FPLContract.methods.commitTeam(teamHash['gk'], teamHash['def'], teamHash['mid'], teamHash['fwd'], gameId)
+      await callMethod.send({ from: context.account }, function(err, transactionHash) {
+        if (err) {
+          console.log(err)
+        } else {
+          alert('team committed!')
+        }
+      })
     } catch (err) {
       console.log(err)
       alert(err)
@@ -294,7 +292,14 @@ async function viewGame(context, FPLContract, gameId) {
 
   async function revealTeam(context, FPLContract, gameId) {
     try {
-      await FPLContract.methods.revealTeam(sha3(numberToHex(gkSelection)), sha3(numberToHex(defSelection)), sha3(numberToHex(midSelection)), sha3(numberToHex(fwdSelection)), gameId, numberToHex(salt), 15).send({ from: context.account })
+      const callMethod = FPLContract.methods.revealTeam(sha3(numberToHex(gkSelection)), sha3(numberToHex(defSelection)), sha3(numberToHex(midSelection)), sha3(numberToHex(fwdSelection)), gameId, numberToHex(salt), 15)
+      await callMethod.send({ from: context.account }, function(err, transactionHash) {
+        if (err) {
+          console.log(err)
+        } else {
+          alert("successful team reveal!")
+        }
+      })
     } catch (err) {
       console.log(err)
       alert(err)
