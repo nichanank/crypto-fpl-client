@@ -198,10 +198,10 @@ export function App() {
 
   async function commitTeam(context, FPLContract, gameId) {
     var teamHash = {}
-    teamHash['gk'] = await FPLContract.methods.getSaltedHash(numberToHex(gkReveal), numberToHex(salt)).call()
-    teamHash['def'] = await FPLContract.methods.getSaltedHash(numberToHex(defReveal), numberToHex(salt)).call()
-    teamHash['mid'] = await FPLContract.methods.getSaltedHash(numberToHex(midReveal), numberToHex(salt)).call()
-    teamHash['fwd'] = await FPLContract.methods.getSaltedHash(numberToHex(fwdReveal), numberToHex(salt)).call()
+    teamHash['gk'] = await FPLContract.methods.getSaltedHash(gkReveal, numberToHex(salt)).call()
+    teamHash['def'] = await FPLContract.methods.getSaltedHash(defReveal, numberToHex(salt)).call()
+    teamHash['mid'] = await FPLContract.methods.getSaltedHash(midReveal, numberToHex(salt)).call()
+    teamHash['fwd'] = await FPLContract.methods.getSaltedHash(fwdReveal, numberToHex(salt)).call()
     try {
       const callMethod = FPLContract.methods.commitTeam(teamHash['gk'], teamHash['def'], teamHash['mid'], teamHash['fwd'], gameId)
       await callMethod.send({ from: context.account }, function(err, transactionHash) {
@@ -248,7 +248,12 @@ export function App() {
           id: #{props.game.id} {props.game.isOpen ? <p class="game-status">open</p> : <p class="game-status">in progress</p>}
           <hr></hr>
           {props.game.player1}
-          {props.game.isOpen ? <button class="btn join-btn" onClick={() => joinGame(context, FPLContract, props.game.id)} > Join for {parseInt(props.game.wager)} wei</button> : <p>vs. {props.game.player2}</p>}
+          {props.game.isOpen ? 
+            props.game.player1 == context.account ? 
+            <p>Waiting for another player to join...</p> : 
+            <button class="btn join-btn" onClick={() => joinGame(context, FPLContract, props.game.id)}> 
+              Join for {parseInt(props.game.wager)} wei</button> : 
+            <p>vs. {props.game.player2}</p>}
         </div>
       </li>
     )
@@ -273,19 +278,19 @@ export function App() {
     switch (footballer.position) {
       case 1: 
         setGkSelection(footballer.player_id)
-        setGkReveal(sha3(numberToHex(footballer.player_id)))
+        setGkReveal(numberToHex(sha3(numberToHex(footballer.player_id))))
         break
       case 2: 
         setDefSelection(footballer.player_id)
-        setDefReveal(sha3(numberToHex(footballer.player_id)))
+        setDefReveal(numberToHex(sha3(numberToHex(footballer.player_id))))
         break
       case 3:
         setMidSelection(footballer.player_id)
-        setMidReveal(sha3(numberToHex(footballer.player_id)))
+        setMidReveal(numberToHex(sha3(numberToHex(footballer.player_id))))
         break
       default: 
         setFwdSelection(footballer.player_id)
-        setFwdReveal(sha3(numberToHex(footballer.player_id)))
+        setFwdReveal(numberToHex(sha3(numberToHex(footballer.player_id))))
         break
     }
     setTeamSelection([...teamSelection, footballer])
