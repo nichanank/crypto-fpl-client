@@ -38,7 +38,6 @@ export async function generateRandomTeam() {
   var def = await axios.get('/api/footballers/position/2')
   var mid = await axios.get('/api/footballers/position/3')
   var fwd = await axios.get('/api/footballers/position/4')
-  console.log(gk, def, mid, fwd)
 
   for(var i = 0; i < 3; i++) {
     idsToMint.push(gk.data[Math.floor(Math.random() * gk.data.length + 1)].player_id)
@@ -66,7 +65,7 @@ export async function fetchGames(context, contract) {
     if (totalGames.toNumber() < 10) { gamesToShow = totalGames.toNumber() } else {gamesToShow = result.length}
     for (var i = 0; i < gamesToShow; i++) {
         gameId = result[i].toNumber()
-        game = await contract.methods.getGameDetails(gameId).call()
+        game = await contract.methods.viewGameDetails(gameId).call()
         games = [...games, game]
         games[i].id = gameId
       }
@@ -87,7 +86,7 @@ export async function fetchRoster(context, FPLCardContract) {
 
 export async function viewGame(context, FPLContract, gameId) {
     try {
-      var game = await FPLContract.methods.getGameDetails(gameId).call()
+      var game = await FPLContract.methods.viewGameDetails(gameId).call()
       var gameCommit = await FPLContract.methods.getTeamCommitForGame(gameId, context.account).call()
       var scoreBN
       var opponentScoreBN
@@ -96,6 +95,7 @@ export async function viewGame(context, FPLContract, gameId) {
       var playerRevealed = false
       var opponentScore = 0
       var score = 0
+      var winner = ''
       if (context.account === game.player1) {
         playerRevealed = await FPLContract.methods.teamRevealed(gameId, game.player1).call()
         gameCommitOpponent = await FPLContract.methods.getTeamCommitForGame(gameId, game.player2).call()
@@ -121,6 +121,9 @@ export async function viewGame(context, FPLContract, gameId) {
           opponentScore = opponentScoreBN.toNumber()
         }
       }
+      if (playerRevealed && opRevealed) {
+        winner = await FPLContract.methods.viewWinner(gameId).call()
+      }
     } catch (err) {
       console.log(err)
       alert(err)
@@ -133,6 +136,7 @@ export async function viewGame(context, FPLContract, gameId) {
       playerRevealed: playerRevealed,
       opRevealed: opRevealed,
       score: score,
-      opponetScore: opponentScore
+      opponentScore: opponentScore,
+      winner: winner
     }
   }

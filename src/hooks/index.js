@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react'
+import { useMemo } from 'react'
 import { useWeb3Context } from 'web3-react'
 
 import { getContract, getContractAddress } from '../utils'
@@ -12,7 +12,6 @@ export function useContract(contractName) {
     else
       return null
   }, [contractName, context.library])
-
   return contract
 }
 

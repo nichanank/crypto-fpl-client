@@ -4,7 +4,6 @@ const FPLCardsC = require('./contracts/CryptoFPLCards.json')
 const getFirstNetwork = obj => {
   const k = Object.keys(obj)[0]
   const address = obj[k].address
-  console.log('address', address)
   return address
 }
 

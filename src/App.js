@@ -61,6 +61,7 @@ export function App() {
   
   const [opponentRevealed, setOpponentRevealed] = useState(false)
   const [revealed, setRevealed] = useState(false)
+  const [isWinner, setIsWinner] = useState(false)
   
   const [gkSelection, setGkSelection] = useState(0)
   const [defSelection, setDefSelection] = useState(0)
@@ -90,6 +91,7 @@ export function App() {
       setOpponentRevealed(result.opRevealed)
       setPlayerScore(result.score)
       setOpponentScore(result.opponentScore)
+      setIsWinner(result.winner.toString() === context.account)
     })
     setCurrentGameId(e.target.value)
   }
@@ -233,19 +235,37 @@ export function App() {
     }
   }
 
+  async function withdrawPayout(gameId) {
+    try {
+      const callMethod = FPLContract.methods.withdrawPayout(gameId)
+      await callMethod.send({ from: context.account }, function(err, transactionHash) {
+        if (err) {
+          console.log(err)
+        } else {
+          alert("Successful withdraw! Tx Hash: " + transactionHash)
+        }
+      })
+    } catch (err) {
+      console.log(err)
+      alert(err)
+    }
+  }
+
   function resetTeam() {
     setTeamSelection([])
     setGkSelection(0)
     setDefSelection(0)
     setMidSelection(0)
     setFwdSelection(0)
+    setRevealed(false)
+    setScoreCalculated(false)
   }
 
   function GameItem(props) {
     return(
       <li>
         <div class="game-item">
-          id: #{props.game.id} {props.game.isOpen ? <p class="game-status">open</p> : <p class="game-status">in progress</p>}
+          id: #{props.game.id} {props.game.isOpen ? <p class="game-status">open</p> : props.game.isFinished ? <p class="game-status">finished</p> : <p class="game-status">in progress</p>}
           <hr></hr>
           {props.game.player1}
           {props.game.isOpen ? 
@@ -299,7 +319,7 @@ export function App() {
   return (
     <div class="App">
       <header class="App-header">
-        <p class="account">{context.account}</p> <br></br>
+        <p class="account">{context.account}</p>
       </header>
       <div class="row how-to-play-container">
         <div class="col s6 m6 l6 gameweek-info-column">
@@ -312,13 +332,18 @@ export function App() {
         <h5 class="title" >Crypto Fantasy Premier League</h5>
       </div>
       <div class="row">
-        <button class="btn" onClick={(e) => handleBuy(e)}> Buy Pack </button>
+        <div class="buy-pack-btn">
+          <button class="btn" onClick={(e) => handleBuy(e)}> Buy Pack </button>
+          <span class="buy-pack-text"> Buy a footballer card pack containing 15 random footballers (3 GK, 4 DEF, 4 MID, 4 FWD) </span>
+          </div>
         </div>
         <div class="row games-container-row">
           <div class="col s12 m6 l6">
             <h6><strong>🎮 Head-to-Head Games 🎮 </strong></h6>
+            <div class="create-game-btn">
               <button class="btn" value="createGame" name="createGame" onClick={() => createGame(context, FPLContract, 10000)}> Create Game </button>
-              {/* <button class="btn" onClick={() => fetchGames(FPLContract)}> View Recent Games </button> */}
+              <span class="create-game-text">Create a game and wait for another player to join your team</span>
+            </div>
               <button class="btn" onClick={(e) => handleFetchGames(e)}> View Recent Games </button>
             <div class="row" >
              <ul>
@@ -329,26 +354,29 @@ export function App() {
             </div>
           </div>
           <div class="col s12 m6 l6">
-            <h6><strong>👟 Squad Selection 👟</strong></h6>
+            <h6><strong>👟 Squad Selection 👟 </strong></h6>
             <div class="row squad-column" >
               <div class="team-container" >
                 <div class="row team-selection-row selected-player-container">
                   <div class="col s6 m6 l6">
-                    <p>Salt </p>
-                    <input
-                      style={{verticalAlign:"middle",width:100,margin:6,maxHeight:20,padding:5,border:'2px solid #ccc',borderRadius:5}}
-                      type="text" name="salt" value={salt} onChange={(e) => handleInput(e)} />
+                    <span><input
+                      style={{verticalAlign:"middle",width:80,margin:6,maxHeight:20,padding:5,border:'2px solid #ccc',borderRadius:5}}
+                      type="text" name="salt" value={salt} onChange={(e) => handleInput(e)} /></span><span>: Salt </span>
                   </div>
                   <div class="col s6 m6 l6">
                     <form className={classes.root} autoComplete="off" onSubmit={(e) => handleSubmit(e)}>
                       <FormControl className={classes.formControl}>
-                        <InputLabel htmlFor="age-simple">Game ID</InputLabel>
+                        <InputLabel htmlFor="age-simple">Select Game</InputLabel>
                         <Select
                           value={currentGameId}
                           onChange={handleChange}>
                           {activeGames.map((game, index) => <MenuItem key={index} value={game.toNumber()}>{game.toNumber()}</MenuItem> )}
                         </Select>
-                        <input class="btn" value="Submit Team" type="submit" />
+                        {currentGame.player1 && gkSelection !== 0  && defSelection !== 0 && midSelection !== 0 && fwdSelection !== 0 ?
+                        <div class="submit-btn">
+                          <input class="btn" value="Submit Team" type="submit" />
+                          <span class="submit-text">Submit your current selection. Remember to take note of your salt and team! You will need to resubmit this to reveal your team later</span>
+                        </div> : <p></p>}
                       </FormControl>
                     </form>
                   </div>
@@ -358,29 +386,33 @@ export function App() {
               <div><br></br><hr></hr>
                 <div class="game-info-container">
                   {currentGame.player1 ? 
-                  <p> <strong>Current Game ID #{currentGameId}</strong> <br></br> 
-                  Player 1: {currentGame.player1} <br></br> 
-                  Player 2: {currentGame.player2} <br></br> 
-                  <strong>YOUR TEAM</strong> <br></br> 
-                  GK: {currentGameCommit[0]} <br></br> 
-                  DEF: {currentGameCommit[1]} <br></br> 
-                  MID: {currentGameCommit[2]} <br></br> 
-                  FWD: {currentGameCommit[3]} <br></br> 
-                  <strong>OPPONENT'S TEAM</strong> <br></br> 
-                  GK: {currentGameCommitOpponent[0]} <br></br> 
-                  DEF: {currentGameCommitOpponent[1]} <br></br> 
-                  MID: {currentGameCommitOpponent[2]} <br></br> 
-                  FWD: {currentGameCommitOpponent[3]} <br></br>
-                  <strong>YOUR SCORE: {playerScore}</strong><br></br>
-                  {opponentRevealed ? <strong> OPPONENT SCORE: {opponentScore}</strong> : 
-                  <p>Still waiting for opponent to reveal their team...</p>}</p> 
+                    <p> <strong>Current Game ID #{currentGameId}</strong> <br></br>
+                    Player 1: {currentGame.player1} <br></br> 
+                    {currentGame.isOpen ? <span>Waiting for another player to join...</span>: <span>Player 2: {currentGame.player2} </span> } <br></br> 
+                    <strong>YOUR TEAM</strong> <br></br>
+                    GK: {currentGameCommit[0]} <br></br>
+                    DEF: {currentGameCommit[1]} <br></br>
+                    MID: {currentGameCommit[2]} <br></br>
+                    FWD: {currentGameCommit[3]} <br></br>
+                    <strong>OPPONENT'S TEAM</strong> <br></br>
+                    GK: {currentGameCommitOpponent[0]} <br></br>
+                    DEF: {currentGameCommitOpponent[1]} <br></br>
+                    MID: {currentGameCommitOpponent[2]} <br></br>
+                    FWD: {currentGameCommitOpponent[3]} <br></br>
+                    <strong>YOUR SCORE: {playerScore}</strong><br></br>
+                    {opponentRevealed ? <span><strong> OPPONENT SCORE: {opponentScore}</strong></span> : 
+                    <span>Still waiting for opponent to reveal their team...</span>}</p> 
                   : <p> Select an active game from the dropdown menu or join an open game </p>}
                 </div>
                 {revealed || scoreCalculated ? 
+                revealed && isWinner ? 
+                <button class="btn" onClick={() => withdrawPayout(currentGameId)}> Withdraw Payout </button> :
                 <button class="btn" onClick={() => revealTeam(context, FPLContract, currentGameId)}> Reveal </button> :
-                <button class="btn" onClick={(e) => handleCalculateScore(e)}> Calculate Score </button>}                
+                currentGame.player1 ? <button class="btn" onClick={(e) => handleCalculateScore(e)}> Calculate Score </button> : <p></p>}       
               </div>
-              <button class="btn" onClick={() => resetTeam()}> Reset Team Selection </button>
+              { teamSelection.length > 0 ?
+              <button class="btn" onClick={() => resetTeam()}> Reset Team Selection </button> :
+              <p></p>}
             </div>
           </div>
         </div>

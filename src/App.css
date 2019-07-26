@@ -84,6 +84,66 @@ header {
   margin-bottom: 10px;
 }
 
+.buy-pack-btn .buy-pack-text {
+  visibility: hidden;
+  width: 120px;
+  background-color: lightgreen;
+  color: black;
+  text-align: center;
+  padding: 5px 0;
+  border-radius: 6px;
+ 
+  position: absolute;
+  z-index: 1;
+}
+
+.buy-pack-btn:hover .buy-pack-text {
+  visibility: visible;
+  text-align: left;
+  padding: 5px;
+  font-size: smaller;
+}
+
+.create-game-btn .create-game-text {
+  visibility: hidden;
+  width: 120px;
+  background-color: lightgreen;
+  color: black;
+  text-align: center;
+  padding: 5px 5px;
+  border-radius: 6px;
+  margin: 5px;
+  position: absolute;
+  z-index: 1;
+}
+
+.create-game-btn:hover .create-game-text {
+  visibility: visible;
+  text-align: left;
+  padding: 5px;
+  font-size: smaller;
+}
+
+.submit-btn .submit-text {
+  visibility: hidden;
+  width: 120px;
+  background-color: lightgreen;
+  color: black;
+  text-align: center;
+  padding: 5px 5px;
+  border-radius: 6px;
+  margin: 5px;
+  position: absolute;
+  z-index: 1;
+}
+
+.submit-btn:hover .submit-text {
+  visibility: visible;
+  text-align: left;
+  padding: 5px;
+  font-size: smaller;
+}
+
 .games-container-row {
   overflow-y: scroll;
   direction: rtl;
