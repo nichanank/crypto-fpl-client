@@ -101,11 +101,11 @@ export async function viewGame(context, FPLContract, gameId) {
         gameCommitOpponent = await FPLContract.methods.getTeamCommitForGame(gameId, game.player2).call()
         opRevealed = await FPLContract.methods.teamRevealed(gameId, game.player2).call()
         if (playerRevealed) {
-          scoreBN = await FPLContract.methods.viewPlayerScore(gameId, game.player2).call()
+          scoreBN = await FPLContract.methods.viewPlayerScore(gameId, game.player1).call()
           score = scoreBN.toNumber()
         }
         if (opRevealed) {
-          opponentScoreBN = await FPLContract.methods.viewPlayerScore(gameId, game.player1).call()
+          opponentScoreBN = await FPLContract.methods.viewPlayerScore(gameId, game.player2).call()
           opponentScore = opponentScoreBN.toNumber()
         }
       } else {
