@@ -12,7 +12,7 @@ import axios from 'axios'
 import { useContract } from './hooks'
 import { position, team } from './constants'
 import HowToPlay from './components/HowToPlay'
-import { sha3, numberToHex } from 'web3-utils'
+import { sha3, numberToHex, fromWei } from 'web3-utils'
 import { convertEpochToDatetime, calculatePlayerScore, generateRandomTeam, fetchGames, fetchRoster, viewGame } from './utils'
 
 // Mints a team to the caller.
@@ -20,8 +20,9 @@ async function buyPack(context, FPLCardContract) {
   const team = await generateRandomTeam()
   const amounts = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
   try {
+    const cardPrice = await FPLCardContract.methods.viewCardPackPrice().call()
     const callMethod = FPLCardContract.methods.mintTeam(context.account, team[0], team[1], amounts)
-    await callMethod.send({ from: context.account, value: 100000 }, function(err, transactionHash) {
+    await callMethod.send({ from: context.account, value: cardPrice }, function(err, transactionHash) {
       if (err) {
         console.log(err)
       } else {
@@ -50,6 +51,7 @@ export function App() {
   const FPLContract = useContract('FPL')
   const [currentGameweek, setCurrentGameweek] = useState({})
   const [deadlinePassed, setDeadlinePassed] = useState(false)
+  const [activePlayer, setActivePlayer] = useState('')
 
   const [roster, setRoster] = useState([])
   const [games, setGames] = useState([])
@@ -141,6 +143,22 @@ export function App() {
     context.setConnector('Injected', true).catch(e => console.error('Error getting injected provider.', e))
     setSalt(Math.floor(Math.random() * 100))
   }, [context.account, context])
+  
+  useEffect(() => {
+    if (context.account !== activePlayer) {
+      setRoster([])
+      setTeamSelection([])
+      setGkSelection(0)
+      setDefSelection(0)
+      setMidSelection(0)
+      setFwdSelection(0)
+      setRevealed(false)
+      setScoreCalculated(false)
+      setActiveGames([])
+      setCurrentGame({})
+      setActivePlayer(context.account)
+    }
+  }, [context.account, activePlayer])
 
   useEffect(() => {
     async function fetchCurrentGameweek() {
@@ -168,11 +186,11 @@ export function App() {
       const callMethod = contract.methods.createGame(wager)
       await callMethod.send({ from: context.account, value: wager }, function(err, transactionHash) {
         if (err) { 
-            console.log(err); 
+            console.log(err);
             alert(err)
         } else {
             alert("Game created! TxHash: " + transactionHash)
-            console.log(transactionHash);
+            console.log(transactionHash)
         }
       })
     } catch (err) {
@@ -184,12 +202,12 @@ export function App() {
   async function joinGame(context, contract, gameId) {
     try {
       const callMethod = contract.methods.joinGame(gameId)
-      await callMethod.send({ from: context.account, value: 10000 }, function(err, transactionHash) {
+      await callMethod.send({ from: context.account, value: 1000000000000000 }, function(err, transactionHash) {
         if (err) { 
-            console.log(err); 
+            console.log(err)
         } else {
             alert("Joined game " + gameId + "! TxHash: " + transactionHash)
-            console.log(transactionHash);
+            console.log(transactionHash)
         }
       })
     } catch (err) {
@@ -265,14 +283,14 @@ export function App() {
     return(
       <li>
         <div class="game-item">
-          id: #{props.game.id} {props.game.isOpen ? <p class="game-status">open</p> : props.game.isFinished ? <p class="game-status">finished</p> : <p class="game-status">in progress</p>}
+          id: #{props.game.id} {props.game.isOpen && !props.game.isFinished ? <p class="game-status">open</p> : props.game.isFinished ? <p class="game-status">finished</p> : <p class="game-status">in progress</p>}
           <hr></hr>
           {props.game.player1}
           {props.game.isOpen ? 
-            props.game.player1 == context.account ? 
+            props.game.player1 === context.account ? 
             <p>Waiting for another player to join...</p> : 
             <button class="btn join-btn" onClick={() => joinGame(context, FPLContract, props.game.id)}> 
-              Join for {parseInt(props.game.wager)} wei</button> : 
+              Join for {fromWei(props.game.wager+"", 'ether')} ETH</button> : 
             <p>vs. {props.game.player2}</p>}
         </div>
       </li>
@@ -319,7 +337,7 @@ export function App() {
   return (
     <div class="App">
       <header class="App-header">
-        <p class="account">{context.account}</p>
+        <p class="account"><strong>{context.account}</strong></p>
       </header>
       <div class="row how-to-play-container">
         <div class="col s6 m6 l6 gameweek-info-column">
@@ -341,8 +359,8 @@ export function App() {
           <div class="col s12 m6 l6">
             <h6><strong>🎮 Head-to-Head Games 🎮 </strong></h6>
             <div class="create-game-btn">
-              <button class="btn" value="createGame" name="createGame" onClick={() => createGame(context, FPLContract, 10000)}> Create Game </button>
-              <span class="create-game-text">Create a game and wait for another player to join your team</span>
+              <button class="btn" value="createGame" name="createGame" onClick={() => createGame(context, FPLContract, 1000000000000000)}> Create Game </button>
+              <span class="create-game-text">Create a new game and wait for another player to join</span>
             </div>
               <button class="btn" onClick={(e) => handleFetchGames(e)}> View Recent Games </button>
             <div class="row" >
@@ -370,7 +388,7 @@ export function App() {
                         <Select
                           value={currentGameId}
                           onChange={handleChange}>
-                          {activeGames.map((game, index) => <MenuItem key={index} value={game.toNumber()}>{game.toNumber()}</MenuItem> )}
+                          {activeGames.map((game, index) => <MenuItem key={index} value={game.returnValues.gameId.toNumber()}>{game.returnValues.gameId.toNumber()}</MenuItem> )}
                         </Select>
                         {currentGame.player1 && gkSelection !== 0  && defSelection !== 0 && midSelection !== 0 && fwdSelection !== 0 ?
                         <div class="submit-btn">
