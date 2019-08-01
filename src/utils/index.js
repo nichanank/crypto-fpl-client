@@ -59,12 +59,12 @@ export async function fetchGames(context, contract) {
     var game
     var gameId
     var gamesToShow
+    var totalGames = 0
     const latestGames = await contract.getPastEvents('LogGameCreation', { fromBlock: 0, toBlock: 'latest' })
     const activeGamesListCreator = await contract.getPastEvents('LogGameCreation', {filter:{player1: context.account}, fromBlock: 0, toBlock: 'latest'})
     const activeGamesListJoiner = await contract.getPastEvents('LogGameBegin', {filter:{player2: context.account}, fromBlock: 0, toBlock: 'latest'})
     const playerActiveGames = activeGamesListCreator.concat((activeGamesListJoiner))
-    
-    const totalGames = await contract.methods.totalGames().call({from: context.account})
+    totalGames = await contract.methods.totalGames().call({from: context.account})
     if (totalGames.toNumber() < 10) { gamesToShow = totalGames.toNumber() } else {gamesToShow = latestGames.length}
     for (var i = 0; i < gamesToShow; i++) {
         gameId = latestGames[i].returnValues.gameId.toNumber()

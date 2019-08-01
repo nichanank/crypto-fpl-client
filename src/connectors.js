@@ -13,7 +13,7 @@ const supportedNetworkURLs = {
 const defaultNetwork = 1
 
 const Injected = new InjectedConnector({
-  supportedNetworks: [1, 4, 5, 6, 5777]
+  supportedNetworks: [1, 3, 4, 5, 6, 5777]
 })
 
 const Network = new NetworkOnlyConnector({

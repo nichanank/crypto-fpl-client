@@ -1,0 +1,1347 @@
+{
+  "contractName": "IERC1155Meta",
+  "abi": [
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_from",
+          "type": "address"
+        },
+        {
+          "name": "_to",
+          "type": "address"
+        },
+        {
+          "name": "_id",
+          "type": "uint256"
+        },
+        {
+          "name": "_amount",
+          "type": "uint256"
+        },
+        {
+          "name": "_isGasFee",
+          "type": "bool"
+        },
+        {
+          "name": "_data",
+          "type": "bytes"
+        }
+      ],
+      "name": "metaSafeTransferFrom",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_from",
+          "type": "address"
+        },
+        {
+          "name": "_to",
+          "type": "address"
+        },
+        {
+          "name": "_ids",
+          "type": "uint256[]"
+        },
+        {
+          "name": "_amounts",
+          "type": "uint256[]"
+        },
+        {
+          "name": "_isGasFee",
+          "type": "bool"
+        },
+        {
+          "name": "_data",
+          "type": "bytes"
+        }
+      ],
+      "name": "metaSafeBatchTransferFrom",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "name": "_owner",
+          "type": "address"
+        },
+        {
+          "name": "_operator",
+          "type": "address"
+        },
+        {
+          "name": "_approved",
+          "type": "bool"
+        },
+        {
+          "name": "_isGasFee",
+          "type": "bool"
+        },
+        {
+          "name": "_data",
+          "type": "bytes"
+        }
+      ],
+      "name": "metaSetApprovalForAll",
+      "outputs": [],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "pragma solidity ^0.5.0;\n\ninterface IERC1155Meta {\n\n  /****************************************|\n  |     Public Meta Transfer Functions     |\n  |_______________________________________*/\n\n  /**\n   * @notice Allows anyone with a valid signature to transfer _amount amount of a token _id on the bahalf of _from\n   * @param _from     Source address\n   * @param _to       Target address\n   * @param _id       ID of the token type\n   * @param _amount   Transfered amount\n   * @param _isGasFee Whether gas is reimbursed to executor or not\n   * @param _data     Encodes a meta transfer indicator, signature, gas payment receipt and extra transfer data\n   *   _data should be encoded as ((bytes32 r, bytes32 s, uint8 v, SignatureType sigType), (GasReceipt g, bytes data))\n   *   i.e. high level encoding should be (bytes, bytes), where the latter bytes array is a nested bytes array\n   */\n  function metaSafeTransferFrom(\n    address _from,\n    address _to,\n    uint256 _id,\n    uint256 _amount,\n    bool _isGasFee,\n    bytes calldata _data)\n  external;\n\n\n  /**\n   * @notice Allows anyone with a valid signature to transfer multiple types of tokens on the bahalf of _from\n   * @param _from     Source addresses\n   * @param _to       Target addresses\n   * @param _ids      IDs of each token type\n   * @param _amounts  Transfer amounts per token type\n   * @param _data     Encodes a meta transfer indicator, signature, gas payment receipt and extra transfer data\n   *   _data should be encoded as ((bytes32 r, bytes32 s, uint8 v, SignatureType sigType), (GasReceipt g, bytes data))\n   *   i.e. high level encoding should be (bytes, bytes), where the latter bytes array is a nested bytes array\n   */\n  function metaSafeBatchTransferFrom(\n    address _from,\n    address _to,\n    uint256[] calldata _ids,\n    uint256[] calldata _amounts,\n    bool _isGasFee,\n    bytes calldata _data)\n  external;\n\n\n  /***********************************|\n  |         Operator Functions        |\n  |__________________________________*/\n\n  /**\n   * @notice Approve the passed address to spend on behalf of _from if valid signature is provided\n   * @param _owner     Address that wants to set operator status  _spender\n   * @param _operator  Address to add to the set of authorized operators\n   * @param _approved  True if the operator is approved, false to revoke approval\n   * @param _isGasFee  Whether gas will be reimbursed or not, with vlid signature\n   * @param _data      Encodes signature and gas payment receipt\n   *   _data should be encoded as ((bytes32 r, bytes32 s, uint8 v, SignatureType sigType), (GasReceipt g))\n   *   i.e. high level encoding should be (bytes, bytes), where the latter bytes array is a nested bytes array\n   */\n  function metaSetApprovalForAll(\n    address _owner,\n    address _operator,\n    bool _approved,\n    bool _isGasFee,\n    bytes calldata _data)\n  external;\n\n}\n",
+  "sourcePath": "/Users/NichananK/consensys-academy/CryptoFPL/contracts/erc/erc1155/IERC1155Meta.sol",
+  "ast": {
+    "absolutePath": "/Users/NichananK/consensys-academy/CryptoFPL/contracts/erc/erc1155/IERC1155Meta.sol",
+    "exportedSymbols": {
+      "IERC1155Meta": [
+        10721
+      ]
+    },
+    "id": 10722,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 10675,
+        "literals": [
+          "solidity",
+          "^",
+          "0.5",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:13"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": null,
+        "fullyImplemented": false,
+        "id": 10721,
+        "linearizedBaseContracts": [
+          10721
+        ],
+        "name": "IERC1155Meta",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": null,
+            "documentation": "@notice Allows anyone with a valid signature to transfer _amount amount of a token _id on the bahalf of _from\n@param _from     Source address\n@param _to       Target address\n@param _id       ID of the token type\n@param _amount   Transfered amount\n@param _isGasFee Whether gas is reimbursed to executor or not\n@param _data     Encodes a meta transfer indicator, signature, gas payment receipt and extra transfer data\n  _data should be encoded as ((bytes32 r, bytes32 s, uint8 v, SignatureType sigType), (GasReceipt g, bytes data))\n  i.e. high level encoding should be (bytes, bytes), where the latter bytes array is a nested bytes array",
+            "id": 10690,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "metaSafeTransferFrom",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 10688,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 10677,
+                  "name": "_from",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10690,
+                  "src": "917:13:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 10676,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "917:7:13",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10679,
+                  "name": "_to",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10690,
+                  "src": "936:11:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 10678,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "936:7:13",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10681,
+                  "name": "_id",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10690,
+                  "src": "953:11:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 10680,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "953:7:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10683,
+                  "name": "_amount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10690,
+                  "src": "970:15:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 10682,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "970:7:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10685,
+                  "name": "_isGasFee",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10690,
+                  "src": "991:14:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 10684,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "991:4:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10687,
+                  "name": "_data",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10690,
+                  "src": "1011:20:13",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 10686,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1011:5:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "911:121:13"
+            },
+            "returnParameters": {
+              "id": 10689,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1043:0:13"
+            },
+            "scope": 10721,
+            "src": "882:162:13",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Allows anyone with a valid signature to transfer multiple types of tokens on the bahalf of _from\n@param _from     Source addresses\n@param _to       Target addresses\n@param _ids      IDs of each token type\n@param _amounts  Transfer amounts per token type\n@param _data     Encodes a meta transfer indicator, signature, gas payment receipt and extra transfer data\n  _data should be encoded as ((bytes32 r, bytes32 s, uint8 v, SignatureType sigType), (GasReceipt g, bytes data))\n  i.e. high level encoding should be (bytes, bytes), where the latter bytes array is a nested bytes array",
+            "id": 10707,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "metaSafeBatchTransferFrom",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 10705,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 10692,
+                  "name": "_from",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10707,
+                  "src": "1730:13:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 10691,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1730:7:13",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10694,
+                  "name": "_to",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10707,
+                  "src": "1749:11:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 10693,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1749:7:13",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10697,
+                  "name": "_ids",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10707,
+                  "src": "1766:23:13",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 10695,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "1766:7:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 10696,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "1766:9:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10700,
+                  "name": "_amounts",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10707,
+                  "src": "1795:27:13",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 10698,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "1795:7:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 10699,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "1795:9:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10702,
+                  "name": "_isGasFee",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10707,
+                  "src": "1828:14:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 10701,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1828:4:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10704,
+                  "name": "_data",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10707,
+                  "src": "1848:20:13",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 10703,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1848:5:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1724:145:13"
+            },
+            "returnParameters": {
+              "id": 10706,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1880:0:13"
+            },
+            "scope": 10721,
+            "src": "1690:191:13",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Approve the passed address to spend on behalf of _from if valid signature is provided\n@param _owner     Address that wants to set operator status  _spender\n@param _operator  Address to add to the set of authorized operators\n@param _approved  True if the operator is approved, false to revoke approval\n@param _isGasFee  Whether gas will be reimbursed or not, with vlid signature\n@param _data      Encodes signature and gas payment receipt\n  _data should be encoded as ((bytes32 r, bytes32 s, uint8 v, SignatureType sigType), (GasReceipt g))\n  i.e. high level encoding should be (bytes, bytes), where the latter bytes array is a nested bytes array",
+            "id": 10720,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "metaSetApprovalForAll",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 10718,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 10709,
+                  "name": "_owner",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10720,
+                  "src": "2749:14:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 10708,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2749:7:13",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10711,
+                  "name": "_operator",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10720,
+                  "src": "2769:17:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 10710,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2769:7:13",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10713,
+                  "name": "_approved",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10720,
+                  "src": "2792:14:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 10712,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2792:4:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10715,
+                  "name": "_isGasFee",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10720,
+                  "src": "2812:14:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 10714,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2812:4:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10717,
+                  "name": "_data",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10720,
+                  "src": "2832:20:13",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 10716,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2832:5:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2743:110:13"
+            },
+            "returnParameters": {
+              "id": 10719,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "2864:0:13"
+            },
+            "scope": 10721,
+            "src": "2713:152:13",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          }
+        ],
+        "scope": 10722,
+        "src": "25:2843:13"
+      }
+    ],
+    "src": "0:2869:13"
+  },
+  "legacyAST": {
+    "absolutePath": "/Users/NichananK/consensys-academy/CryptoFPL/contracts/erc/erc1155/IERC1155Meta.sol",
+    "exportedSymbols": {
+      "IERC1155Meta": [
+        10721
+      ]
+    },
+    "id": 10722,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 10675,
+        "literals": [
+          "solidity",
+          "^",
+          "0.5",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:13"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": null,
+        "fullyImplemented": false,
+        "id": 10721,
+        "linearizedBaseContracts": [
+          10721
+        ],
+        "name": "IERC1155Meta",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": null,
+            "documentation": "@notice Allows anyone with a valid signature to transfer _amount amount of a token _id on the bahalf of _from\n@param _from     Source address\n@param _to       Target address\n@param _id       ID of the token type\n@param _amount   Transfered amount\n@param _isGasFee Whether gas is reimbursed to executor or not\n@param _data     Encodes a meta transfer indicator, signature, gas payment receipt and extra transfer data\n  _data should be encoded as ((bytes32 r, bytes32 s, uint8 v, SignatureType sigType), (GasReceipt g, bytes data))\n  i.e. high level encoding should be (bytes, bytes), where the latter bytes array is a nested bytes array",
+            "id": 10690,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "metaSafeTransferFrom",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 10688,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 10677,
+                  "name": "_from",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10690,
+                  "src": "917:13:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 10676,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "917:7:13",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10679,
+                  "name": "_to",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10690,
+                  "src": "936:11:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 10678,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "936:7:13",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10681,
+                  "name": "_id",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10690,
+                  "src": "953:11:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 10680,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "953:7:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10683,
+                  "name": "_amount",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10690,
+                  "src": "970:15:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_uint256",
+                    "typeString": "uint256"
+                  },
+                  "typeName": {
+                    "id": 10682,
+                    "name": "uint256",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "970:7:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_uint256",
+                      "typeString": "uint256"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10685,
+                  "name": "_isGasFee",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10690,
+                  "src": "991:14:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 10684,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "991:4:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10687,
+                  "name": "_data",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10690,
+                  "src": "1011:20:13",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 10686,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1011:5:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "911:121:13"
+            },
+            "returnParameters": {
+              "id": 10689,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1043:0:13"
+            },
+            "scope": 10721,
+            "src": "882:162:13",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Allows anyone with a valid signature to transfer multiple types of tokens on the bahalf of _from\n@param _from     Source addresses\n@param _to       Target addresses\n@param _ids      IDs of each token type\n@param _amounts  Transfer amounts per token type\n@param _data     Encodes a meta transfer indicator, signature, gas payment receipt and extra transfer data\n  _data should be encoded as ((bytes32 r, bytes32 s, uint8 v, SignatureType sigType), (GasReceipt g, bytes data))\n  i.e. high level encoding should be (bytes, bytes), where the latter bytes array is a nested bytes array",
+            "id": 10707,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "metaSafeBatchTransferFrom",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 10705,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 10692,
+                  "name": "_from",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10707,
+                  "src": "1730:13:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 10691,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1730:7:13",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10694,
+                  "name": "_to",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10707,
+                  "src": "1749:11:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 10693,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1749:7:13",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10697,
+                  "name": "_ids",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10707,
+                  "src": "1766:23:13",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 10695,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "1766:7:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 10696,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "1766:9:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10700,
+                  "name": "_amounts",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10707,
+                  "src": "1795:27:13",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_array$_t_uint256_$dyn_calldata_ptr",
+                    "typeString": "uint256[]"
+                  },
+                  "typeName": {
+                    "baseType": {
+                      "id": 10698,
+                      "name": "uint256",
+                      "nodeType": "ElementaryTypeName",
+                      "src": "1795:7:13",
+                      "typeDescriptions": {
+                        "typeIdentifier": "t_uint256",
+                        "typeString": "uint256"
+                      }
+                    },
+                    "id": 10699,
+                    "length": null,
+                    "nodeType": "ArrayTypeName",
+                    "src": "1795:9:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_array$_t_uint256_$dyn_storage_ptr",
+                      "typeString": "uint256[]"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10702,
+                  "name": "_isGasFee",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10707,
+                  "src": "1828:14:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 10701,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1828:4:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10704,
+                  "name": "_data",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10707,
+                  "src": "1848:20:13",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 10703,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1848:5:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1724:145:13"
+            },
+            "returnParameters": {
+              "id": 10706,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "1880:0:13"
+            },
+            "scope": 10721,
+            "src": "1690:191:13",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Approve the passed address to spend on behalf of _from if valid signature is provided\n@param _owner     Address that wants to set operator status  _spender\n@param _operator  Address to add to the set of authorized operators\n@param _approved  True if the operator is approved, false to revoke approval\n@param _isGasFee  Whether gas will be reimbursed or not, with vlid signature\n@param _data      Encodes signature and gas payment receipt\n  _data should be encoded as ((bytes32 r, bytes32 s, uint8 v, SignatureType sigType), (GasReceipt g))\n  i.e. high level encoding should be (bytes, bytes), where the latter bytes array is a nested bytes array",
+            "id": 10720,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "metaSetApprovalForAll",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 10718,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 10709,
+                  "name": "_owner",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10720,
+                  "src": "2749:14:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 10708,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2749:7:13",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10711,
+                  "name": "_operator",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10720,
+                  "src": "2769:17:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_address",
+                    "typeString": "address"
+                  },
+                  "typeName": {
+                    "id": 10710,
+                    "name": "address",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2769:7:13",
+                    "stateMutability": "nonpayable",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_address",
+                      "typeString": "address"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10713,
+                  "name": "_approved",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10720,
+                  "src": "2792:14:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 10712,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2792:4:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10715,
+                  "name": "_isGasFee",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10720,
+                  "src": "2812:14:13",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bool",
+                    "typeString": "bool"
+                  },
+                  "typeName": {
+                    "id": 10714,
+                    "name": "bool",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2812:4:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bool",
+                      "typeString": "bool"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 10717,
+                  "name": "_data",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 10720,
+                  "src": "2832:20:13",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 10716,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "2832:5:13",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "2743:110:13"
+            },
+            "returnParameters": {
+              "id": 10719,
+              "nodeType": "ParameterList",
+              "parameters": [],
+              "src": "2864:0:13"
+            },
+            "scope": 10721,
+            "src": "2713:152:13",
+            "stateMutability": "nonpayable",
+            "superFunction": null,
+            "visibility": "external"
+          }
+        ],
+        "scope": 10722,
+        "src": "25:2843:13"
+      }
+    ],
+    "src": "0:2869:13"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.0+commit.1d4f565a.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.2",
+  "updatedAt": "2019-07-30T13:16:24.083Z",
+  "devdoc": {
+    "methods": {
+      "metaSafeBatchTransferFrom(address,address,uint256[],uint256[],bool,bytes)": {
+        "params": {
+          "_amounts": "Transfer amounts per token type",
+          "_data": "Encodes a meta transfer indicator, signature, gas payment receipt and extra transfer data  _data should be encoded as ((bytes32 r, bytes32 s, uint8 v, SignatureType sigType), (GasReceipt g, bytes data))  i.e. high level encoding should be (bytes, bytes), where the latter bytes array is a nested bytes array",
+          "_from": "Source addresses",
+          "_ids": "IDs of each token type",
+          "_to": "Target addresses"
+        }
+      },
+      "metaSafeTransferFrom(address,address,uint256,uint256,bool,bytes)": {
+        "params": {
+          "_amount": "Transfered amount",
+          "_data": "Encodes a meta transfer indicator, signature, gas payment receipt and extra transfer data  _data should be encoded as ((bytes32 r, bytes32 s, uint8 v, SignatureType sigType), (GasReceipt g, bytes data))  i.e. high level encoding should be (bytes, bytes), where the latter bytes array is a nested bytes array",
+          "_from": "Source address",
+          "_id": "ID of the token type",
+          "_isGasFee": "Whether gas is reimbursed to executor or not",
+          "_to": "Target address"
+        }
+      },
+      "metaSetApprovalForAll(address,address,bool,bool,bytes)": {
+        "params": {
+          "_approved": "True if the operator is approved, false to revoke approval",
+          "_data": "Encodes signature and gas payment receipt  _data should be encoded as ((bytes32 r, bytes32 s, uint8 v, SignatureType sigType), (GasReceipt g))  i.e. high level encoding should be (bytes, bytes), where the latter bytes array is a nested bytes array",
+          "_isGasFee": "Whether gas will be reimbursed or not, with vlid signature",
+          "_operator": "Address to add to the set of authorized operators",
+          "_owner": "Address that wants to set operator status  _spender"
+        }
+      }
+    }
+  },
+  "userdoc": {
+    "methods": {
+      "metaSafeBatchTransferFrom(address,address,uint256[],uint256[],bool,bytes)": {
+        "notice": "Allows anyone with a valid signature to transfer multiple types of tokens on the bahalf of _from"
+      },
+      "metaSafeTransferFrom(address,address,uint256,uint256,bool,bytes)": {
+        "notice": "Allows anyone with a valid signature to transfer _amount amount of a token _id on the bahalf of _from"
+      },
+      "metaSetApprovalForAll(address,address,bool,bool,bytes)": {
+        "notice": "Approve the passed address to spend on behalf of _from if valid signature is provided"
+      }
+    }
+  }
+}

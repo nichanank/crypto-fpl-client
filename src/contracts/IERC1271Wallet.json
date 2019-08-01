@@ -1,0 +1,604 @@
+{
+  "contractName": "IERC1271Wallet",
+  "abi": [
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_hash",
+          "type": "bytes32"
+        },
+        {
+          "name": "_signature",
+          "type": "bytes"
+        }
+      ],
+      "name": "isValidSignature",
+      "outputs": [
+        {
+          "name": "magicValue",
+          "type": "bytes4"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": true,
+      "inputs": [
+        {
+          "name": "_data",
+          "type": "bytes"
+        },
+        {
+          "name": "_signature",
+          "type": "bytes"
+        }
+      ],
+      "name": "isValidSignature",
+      "outputs": [
+        {
+          "name": "magicValue",
+          "type": "bytes4"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "sourceMap": "",
+  "deployedSourceMap": "",
+  "source": "pragma solidity ^0.5.0;\n\n\ninterface  IERC1271Wallet {\n\n  /**\n   * @notice Verifies whether the provided signature is valid with respect to the provided data\n   * @dev MUST return the correct magic value if the signature provided is valid for the provided data\n   *   > The bytes4 magic value to return when signature is valid is 0x20c13b0b : bytes4(keccak256(\"isValidSignature(bytes,bytes)\")\n   *   > This function MAY modify Ethereum's state\n   * @param _data       Arbitrary length data signed on the behalf of address(this)\n   * @param _signature  Signature byte array associated with _data\n   * @return Magic value 0x20c13b0b if the signature is valid and 0x0 otherwise\n   *\n   */\n  function isValidSignature(\n    bytes calldata _data,\n    bytes calldata _signature)\n    external\n    view\n    returns (bytes4 magicValue);\n\n  /**\n   * @notice Verifies whether the provided signature is valid with respect to the provided hash\n   * @dev MUST return the correct magic value if the signature provided is valid for the provided hash\n   *   > The bytes4 magic value to return when signature is valid is 0x20c13b0b : bytes4(keccak256(\"isValidSignature(bytes,bytes)\")\n   *   > This function MAY modify Ethereum's state\n   * @param _hash       keccak256 hash that was signed\n   * @param _signature  Signature byte array associated with _data\n   * @return Magic value 0x20c13b0b if the signature is valid and 0x0 otherwise\n   */\n  function isValidSignature(\n    bytes32 _hash,\n    bytes calldata _signature)\n    external\n    view\n    returns (bytes4 magicValue);\n}",
+  "sourcePath": "/Users/NichananK/consensys-academy/CryptoFPL/contracts/erc/IERC1271Wallet.sol",
+  "ast": {
+    "absolutePath": "/Users/NichananK/consensys-academy/CryptoFPL/contracts/erc/IERC1271Wallet.sol",
+    "exportedSymbols": {
+      "IERC1271Wallet": [
+        8562
+      ]
+    },
+    "id": 8563,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 8543,
+        "literals": [
+          "solidity",
+          "^",
+          "0.5",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:6"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": null,
+        "fullyImplemented": false,
+        "id": 8562,
+        "linearizedBaseContracts": [
+          8562
+        ],
+        "name": "IERC1271Wallet",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": null,
+            "documentation": "@notice Verifies whether the provided signature is valid with respect to the provided data\n@dev MUST return the correct magic value if the signature provided is valid for the provided data\n  > The bytes4 magic value to return when signature is valid is 0x20c13b0b : bytes4(keccak256(\"isValidSignature(bytes,bytes)\")\n  > This function MAY modify Ethereum's state\n@param _data       Arbitrary length data signed on the behalf of address(this)\n@param _signature  Signature byte array associated with _data\n@return Magic value 0x20c13b0b if the signature is valid and 0x0 otherwise\n   ",
+            "id": 8552,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "isValidSignature",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 8548,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 8545,
+                  "name": "_data",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 8552,
+                  "src": "718:20:6",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 8544,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "718:5:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 8547,
+                  "name": "_signature",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 8552,
+                  "src": "744:25:6",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 8546,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "744:5:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "712:58:6"
+            },
+            "returnParameters": {
+              "id": 8551,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 8550,
+                  "name": "magicValue",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 8552,
+                  "src": "806:17:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes4",
+                    "typeString": "bytes4"
+                  },
+                  "typeName": {
+                    "id": 8549,
+                    "name": "bytes4",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "806:6:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes4",
+                      "typeString": "bytes4"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "805:19:6"
+            },
+            "scope": 8562,
+            "src": "687:138:6",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Verifies whether the provided signature is valid with respect to the provided hash\n@dev MUST return the correct magic value if the signature provided is valid for the provided hash\n  > The bytes4 magic value to return when signature is valid is 0x20c13b0b : bytes4(keccak256(\"isValidSignature(bytes,bytes)\")\n  > This function MAY modify Ethereum's state\n@param _hash       keccak256 hash that was signed\n@param _signature  Signature byte array associated with _data\n@return Magic value 0x20c13b0b if the signature is valid and 0x0 otherwise",
+            "id": 8561,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "isValidSignature",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 8557,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 8554,
+                  "name": "_hash",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 8561,
+                  "src": "1456:13:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
+                  },
+                  "typeName": {
+                    "id": 8553,
+                    "name": "bytes32",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1456:7:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes32",
+                      "typeString": "bytes32"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 8556,
+                  "name": "_signature",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 8561,
+                  "src": "1475:25:6",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 8555,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1475:5:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1450:51:6"
+            },
+            "returnParameters": {
+              "id": 8560,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 8559,
+                  "name": "magicValue",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 8561,
+                  "src": "1537:17:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes4",
+                    "typeString": "bytes4"
+                  },
+                  "typeName": {
+                    "id": 8558,
+                    "name": "bytes4",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1537:6:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes4",
+                      "typeString": "bytes4"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1536:19:6"
+            },
+            "scope": 8562,
+            "src": "1425:131:6",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          }
+        ],
+        "scope": 8563,
+        "src": "26:1532:6"
+      }
+    ],
+    "src": "0:1558:6"
+  },
+  "legacyAST": {
+    "absolutePath": "/Users/NichananK/consensys-academy/CryptoFPL/contracts/erc/IERC1271Wallet.sol",
+    "exportedSymbols": {
+      "IERC1271Wallet": [
+        8562
+      ]
+    },
+    "id": 8563,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 8543,
+        "literals": [
+          "solidity",
+          "^",
+          "0.5",
+          ".0"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:23:6"
+      },
+      {
+        "baseContracts": [],
+        "contractDependencies": [],
+        "contractKind": "interface",
+        "documentation": null,
+        "fullyImplemented": false,
+        "id": 8562,
+        "linearizedBaseContracts": [
+          8562
+        ],
+        "name": "IERC1271Wallet",
+        "nodeType": "ContractDefinition",
+        "nodes": [
+          {
+            "body": null,
+            "documentation": "@notice Verifies whether the provided signature is valid with respect to the provided data\n@dev MUST return the correct magic value if the signature provided is valid for the provided data\n  > The bytes4 magic value to return when signature is valid is 0x20c13b0b : bytes4(keccak256(\"isValidSignature(bytes,bytes)\")\n  > This function MAY modify Ethereum's state\n@param _data       Arbitrary length data signed on the behalf of address(this)\n@param _signature  Signature byte array associated with _data\n@return Magic value 0x20c13b0b if the signature is valid and 0x0 otherwise\n   ",
+            "id": 8552,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "isValidSignature",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 8548,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 8545,
+                  "name": "_data",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 8552,
+                  "src": "718:20:6",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 8544,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "718:5:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 8547,
+                  "name": "_signature",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 8552,
+                  "src": "744:25:6",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 8546,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "744:5:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "712:58:6"
+            },
+            "returnParameters": {
+              "id": 8551,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 8550,
+                  "name": "magicValue",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 8552,
+                  "src": "806:17:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes4",
+                    "typeString": "bytes4"
+                  },
+                  "typeName": {
+                    "id": 8549,
+                    "name": "bytes4",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "806:6:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes4",
+                      "typeString": "bytes4"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "805:19:6"
+            },
+            "scope": 8562,
+            "src": "687:138:6",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          },
+          {
+            "body": null,
+            "documentation": "@notice Verifies whether the provided signature is valid with respect to the provided hash\n@dev MUST return the correct magic value if the signature provided is valid for the provided hash\n  > The bytes4 magic value to return when signature is valid is 0x20c13b0b : bytes4(keccak256(\"isValidSignature(bytes,bytes)\")\n  > This function MAY modify Ethereum's state\n@param _hash       keccak256 hash that was signed\n@param _signature  Signature byte array associated with _data\n@return Magic value 0x20c13b0b if the signature is valid and 0x0 otherwise",
+            "id": 8561,
+            "implemented": false,
+            "kind": "function",
+            "modifiers": [],
+            "name": "isValidSignature",
+            "nodeType": "FunctionDefinition",
+            "parameters": {
+              "id": 8557,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 8554,
+                  "name": "_hash",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 8561,
+                  "src": "1456:13:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes32",
+                    "typeString": "bytes32"
+                  },
+                  "typeName": {
+                    "id": 8553,
+                    "name": "bytes32",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1456:7:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes32",
+                      "typeString": "bytes32"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                },
+                {
+                  "constant": false,
+                  "id": 8556,
+                  "name": "_signature",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 8561,
+                  "src": "1475:25:6",
+                  "stateVariable": false,
+                  "storageLocation": "calldata",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes_calldata_ptr",
+                    "typeString": "bytes"
+                  },
+                  "typeName": {
+                    "id": 8555,
+                    "name": "bytes",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1475:5:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes_storage_ptr",
+                      "typeString": "bytes"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1450:51:6"
+            },
+            "returnParameters": {
+              "id": 8560,
+              "nodeType": "ParameterList",
+              "parameters": [
+                {
+                  "constant": false,
+                  "id": 8559,
+                  "name": "magicValue",
+                  "nodeType": "VariableDeclaration",
+                  "scope": 8561,
+                  "src": "1537:17:6",
+                  "stateVariable": false,
+                  "storageLocation": "default",
+                  "typeDescriptions": {
+                    "typeIdentifier": "t_bytes4",
+                    "typeString": "bytes4"
+                  },
+                  "typeName": {
+                    "id": 8558,
+                    "name": "bytes4",
+                    "nodeType": "ElementaryTypeName",
+                    "src": "1537:6:6",
+                    "typeDescriptions": {
+                      "typeIdentifier": "t_bytes4",
+                      "typeString": "bytes4"
+                    }
+                  },
+                  "value": null,
+                  "visibility": "internal"
+                }
+              ],
+              "src": "1536:19:6"
+            },
+            "scope": 8562,
+            "src": "1425:131:6",
+            "stateMutability": "view",
+            "superFunction": null,
+            "visibility": "external"
+          }
+        ],
+        "scope": 8563,
+        "src": "26:1532:6"
+      }
+    ],
+    "src": "0:1558:6"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.0+commit.1d4f565a.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.0.2",
+  "updatedAt": "2019-07-30T13:16:24.038Z",
+  "devdoc": {
+    "methods": {
+      "isValidSignature(bytes,bytes)": {
+        "details": "MUST return the correct magic value if the signature provided is valid for the provided data  > The bytes4 magic value to return when signature is valid is 0x20c13b0b : bytes4(keccak256(\"isValidSignature(bytes,bytes)\")  > This function MAY modify Ethereum's state",
+        "params": {
+          "_data": "Arbitrary length data signed on the behalf of address(this)",
+          "_signature": "Signature byte array associated with _data"
+        },
+        "return": "Magic value 0x20c13b0b if the signature is valid and 0x0 otherwise   "
+      },
+      "isValidSignature(bytes32,bytes)": {
+        "details": "MUST return the correct magic value if the signature provided is valid for the provided hash  > The bytes4 magic value to return when signature is valid is 0x20c13b0b : bytes4(keccak256(\"isValidSignature(bytes,bytes)\")  > This function MAY modify Ethereum's state",
+        "params": {
+          "_hash": "keccak256 hash that was signed",
+          "_signature": "Signature byte array associated with _data"
+        },
+        "return": "Magic value 0x20c13b0b if the signature is valid and 0x0 otherwise"
+      }
+    }
+  },
+  "userdoc": {
+    "methods": {
+      "isValidSignature(bytes,bytes)": {
+        "notice": "Verifies whether the provided signature is valid with respect to the provided data"
+      },
+      "isValidSignature(bytes32,bytes)": {
+        "notice": "Verifies whether the provided signature is valid with respect to the provided hash"
+      }
+    }
+  }
+}
